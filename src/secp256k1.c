@@ -17,6 +17,7 @@
 #include "ecdsa_impl.h"
 #include "eckey_impl.h"
 #include "hash_impl.h"
+#include "scratch_impl.h"
 
 #define ARG_CHECK(cond) do { \
     if (EXPECT(!(cond), 0)) { \
@@ -114,6 +115,17 @@ void secp256k1_context_set_error_callback(secp256k1_context* ctx, void (*fun)(co
     ctx->error_callback.data = data;
 }
 
+secp256k1_scratch_space* secp256k1_scratch_space_create(const secp256k1_context* ctx, size_t init_size, size_t max_size) {
+    VERIFY_CHECK(ctx != NULL);
+    ARG_CHECK(max_size >= init_size);
+
+    return secp256k1_scratch_create(&ctx->error_callback, init_size, max_size);
+}
+
+void secp256k1_scratch_space_destroy(secp256k1_scratch_space* scratch) {
+    secp256k1_scratch_destroy(scratch);
+}
+
 static int secp256k1_pubkey_load(const secp256k1_context* ctx, secp256k1_ge* ge, const secp256k1_pubkey* pubkey) {
     if (sizeof(secp256k1_ge_storage) == 64) {
         /* When the secp256k1_ge_storage type is exactly 64 byte, use its
@@ -169,7 +181,7 @@ int secp256k1_ec_pubkey_serialize(const secp256k1_context* ctx, unsigned char *o
 
     VERIFY_CHECK(ctx != NULL);
     ARG_CHECK(outputlen != NULL);
-    ARG_CHECK(*outputlen >= ((flags & SECP256K1_FLAGS_BIT_COMPRESSION) ? 33 : 65));
+    ARG_CHECK(*outputlen >= ((flags & SECP256K1_FLAGS_BIT_COMPRESSION) != 0 ? 33u : 65u));
     len = *outputlen;
     *outputlen = 0;
     ARG_CHECK(output != NULL);
@@ -310,7 +322,7 @@ int secp256k1_ecdsa_verify(const secp256k1_context* ctx, const secp256k1_ecdsa_s
 static int nonce_function_rfc6979(unsigned char *nonce32, const unsigned char *msg32, const unsigned char *key32, const unsigned char *algo16, void *data, unsigned int counter) {
    unsigned char keydata[112];
    int keylen = 64;
-   secp256k1_rfc6979_hmac_sha256_t rng;
+   secp256k1_rfc6979_hmac_sha256 rng;
    unsigned int i;
    /* We feed a byte array to the PRNG as input, consisting of:
     * - the private key (32 bytes) and message (32 bytes), see RFC 6979 3.2d.
@@ -359,16 +371,15 @@ int secp256k1_ecdsa_sign(const secp256k1_context* ctx, secp256k1_ecdsa_signature
     secp256k1_scalar_set_b32(&sec, seckey, &overflow);
     /* Fail if the secret key is invalid. */
     if (!overflow && !secp256k1_scalar_is_zero(&sec)) {
+        unsigned char nonce32[32];
         unsigned int count = 0;
         secp256k1_scalar_set_b32(&msg, msg32, NULL);
         while (1) {
-            unsigned char nonce32[32];
             ret = noncefp(nonce32, msg32, seckey, NULL, (void*)noncedata, count);
             if (!ret) {
                 break;
             }
             secp256k1_scalar_set_b32(&non, nonce32, &overflow);
-            memset(nonce32, 0, 32);
             if (!overflow && !secp256k1_scalar_is_zero(&non)) {
                 if (secp256k1_ecdsa_sig_sign(&ctx->ecmult_gen_ctx, &r, &s, &sec, &msg, &non, NULL)) {
                     break;
@@ -376,6 +387,7 @@ int secp256k1_ecdsa_sign(const secp256k1_context* ctx, secp256k1_ecdsa_signature
             }
             count++;
         }
+        memset(nonce32, 0, 32);
         secp256k1_scalar_clear(&msg);
         secp256k1_scalar_clear(&non);
         secp256k1_scalar_clear(&sec);
@@ -421,6 +433,33 @@ int secp256k1_ec_pubkey_create(const secp256k1_context* ctx, secp256k1_pubkey *p
         secp256k1_pubkey_save(pubkey, &p);
     }
     secp256k1_scalar_clear(&sec);
+    return ret;
+}
+
+int secp256k1_ec_privkey_negate(const secp256k1_context* ctx, unsigned char *seckey) {
+    secp256k1_scalar sec;
+    VERIFY_CHECK(ctx != NULL);
+    ARG_CHECK(seckey != NULL);
+
+    secp256k1_scalar_set_b32(&sec, seckey, NULL);
+    secp256k1_scalar_negate(&sec, &sec);
+    secp256k1_scalar_get_b32(seckey, &sec);
+
+    return 1;
+}
+
+int secp256k1_ec_pubkey_negate(const secp256k1_context* ctx, secp256k1_pubkey *pubkey) {
+    int ret = 0;
+    secp256k1_ge p;
+    VERIFY_CHECK(ctx != NULL);
+    ARG_CHECK(pubkey != NULL);
+
+    ret = secp256k1_pubkey_load(ctx, &p, pubkey);
+    memset(pubkey, 0, sizeof(*pubkey));
+    if (ret) {
+        secp256k1_ge_neg(&p, &p);
+        secp256k1_pubkey_save(pubkey, &p);
+    }
     return ret;
 }
 
@@ -550,10 +589,6 @@ int secp256k1_ec_pubkey_combine(const secp256k1_context* ctx, secp256k1_pubkey *
 
 #ifdef ENABLE_MODULE_ECDH
 # include "modules/ecdh/main_impl.h"
-#endif
-
-#ifdef ENABLE_MODULE_SCHNORR
-# include "modules/schnorr/main_impl.h"
 #endif
 
 #ifdef ENABLE_MODULE_RECOVERY

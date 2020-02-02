@@ -30,7 +30,7 @@ class Secp256k1Conan(KnuthConanFile):
                "enable_module_schnorr": [True, False],
                "enable_module_recovery": [True, False],
                "enable_module_multiset": [True, False],
-               "with_benchmark": [True, False],
+               "benchmark": [True, False],
                "tests": [True, False],
                "openssl_tests": [True, False],
                "bignum_lib": [True, False],
@@ -38,6 +38,10 @@ class Secp256k1Conan(KnuthConanFile):
                "fix_march": [True, False],
                "march_id": "ANY",
                "verbose": [True, False],
+               "cxxflags": "ANY",
+               "cflags": "ANY",
+               "cmake_export_compile_commands": [True, False],
+
 
                
             #    "with_bignum": ["conan", "auto", "system", "no"]
@@ -61,14 +65,17 @@ class Secp256k1Conan(KnuthConanFile):
         "enable_module_schnorr=True", \
         "enable_module_recovery=True", \
         "enable_module_multiset=True", \
-        "with_benchmark=False", \
+        "benchmark=False", \
         "tests=False", \
         "openssl_tests=False", \
         "bignum_lib=True", \
         "microarchitecture=_DUMMY_",  \
         "fix_march=False", \
         "march_id=_DUMMY_",  \
-        "verbose=False"
+        "verbose=False",  \
+        "cxxflags=_DUMMY_", \
+        "cflags=_DUMMY_", \
+        "cmake_export_compile_commands=False"
 
         # "with_bignum=conan"
         # "with_asm='auto'", \
@@ -127,16 +134,16 @@ class Secp256k1Conan(KnuthConanFile):
     def package_id(self):
         KnuthConanFile.package_id(self)
 
-        self.info.options.with_benchmark = "ANY"
+        self.info.options.benchmark = "ANY"
         self.info.options.openssl_tests = "ANY"
 
 
     def build(self):
         cmake = self.cmake_basis(pure_c=True)
-        cmake.definitions["ENABLE_BENCHMARK"] = option_on_off(self.options.with_benchmark)
+        cmake.definitions["ENABLE_BENCHMARK"] = option_on_off(self.options.benchmark)
         cmake.definitions["ENABLE_TESTS"] = option_on_off(self.options.tests)
         cmake.definitions["ENABLE_OPENSSL_TESTS"] = option_on_off(self.options.openssl_tests)
-        # cmake.definitions["ENABLE_BENCHMARK"] = option_on_off(self.with_benchmark)
+        # cmake.definitions["ENABLE_BENCHMARK"] = option_on_off(self.benchmark)
         # cmake.definitions["ENABLE_TESTS"] = option_on_off(self.tests)
         # cmake.definitions["ENABLE_OPENSSL_TESTS"] = option_on_off(self.openssl_tests)
         cmake.definitions["ENABLE_EXPERIMENTAL"] = option_on_off(self.options.enable_experimental)

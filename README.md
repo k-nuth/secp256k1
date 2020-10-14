@@ -13,12 +13,13 @@ Features:
 * secp256k1 ECDSA signing/verification and key generation.
 * Additive and multiplicative tweaking of secret/public keys.
 * Serialization/parsing of secret keys, public keys, signatures.
-* Constant time, constant memory access signing and public key generation.
+* Constant time, constant memory access signing and pubkey generation.
 * Derandomized ECDSA (via RFC6979 or with a caller provided function.)
 * Very efficient implementation.
 * Suitable for embedded systems.
 * Optional module for public key recovery.
 * Optional module for ECDH key exchange (experimental).
+* Optional module for multiset hash (experimental).
 
 Experimental features have not received enough scrutiny to satisfy the standard of quality of this library but are made available for testing and review by the community. The APIs of these features should not be considered stable.
 

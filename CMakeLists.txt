@@ -48,6 +48,21 @@ option(ENABLE_MODULE_RECOVERY "Enable ECDSA pubkey recovery module." ON)
 option(ENABLE_MODULE_MULTISET "Enable multiset operations (experimental)." ON)
 
 
+# Make the emult window size customizable.
+set(SECP256K1_ECMULT_WINDOW_SIZE 15 CACHE STRING "Window size for ecmult precomputation for verification, specified as integer in range [2..24].")
+if(${SECP256K1_ECMULT_WINDOW_SIZE} LESS 2 OR ${SECP256K1_ECMULT_WINDOW_SIZE} GREATER 24)
+	message(FATAL_ERROR "SECP256K1_ECMULT_WINDOW_SIZE must be an integer in range [2..24]")
+endif()
+add_definitions(-DECMULT_WINDOW_SIZE=${SECP256K1_ECMULT_WINDOW_SIZE})
+
+set(SECP256K1_ECMULT_GEN_PRECISION 4 CACHE STRING "Precision bits to tune the precomputed table size for signing.")
+set(VALID_PRECISIONS 2 4 8)
+if(NOT ${SECP256K1_ECMULT_GEN_PRECISION} IN_LIST VALID_PRECISIONS)
+	message(FATAL_ERROR "SECP256K1_ECMULT_GEN_PRECISION not 2, 4, 8")
+endif()
+add_definitions(-DECMULT_GEN_PREC_BITS=${SECP256K1_ECMULT_GEN_PRECISION})
+
+
 # message(${ENABLE_TESTS})
 # option(WITH_BIGNUM "")
 
@@ -230,7 +245,10 @@ endif(ENABLE_POSITION_INDEPENDENT_CODE)
 target_include_directories(secp256k1 PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_include_directories(secp256k1 PUBLIC
+  target_include_directories(secp256k1 PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+  target_include_directories(secp256k1 PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 

@@ -142,7 +142,7 @@ void test_exhaustive_addition(const secp256k1_ge *group, const secp256k1_gej *gr
     for (i = 0; i < order; i++) {
         secp256k1_gej tmp;
         if (i > 0) {
-            secp256k1_gej_double_nonzero(&tmp, &groupj[i], NULL);
+            secp256k1_gej_double_nonzero(&tmp, &groupj[i]);
             ge_equals_gej(&group[(2 * i) % order], &tmp);
         }
         secp256k1_gej_double_var(&tmp, &groupj[i], NULL);
@@ -174,12 +174,52 @@ void test_exhaustive_ecmult(const secp256k1_context *ctx, const secp256k1_ge *gr
                 ge_equals_gej(&group[(i * r_log + j) % order], &tmp);
 
                 if (i > 0) {
-                    secp256k1_ecmult_const(&tmp, &group[i], &ng);
+                    secp256k1_ecmult_const(&tmp, &group[i], &ng, 256);
                     ge_equals_gej(&group[(i * j) % order], &tmp);
                 }
             }
         }
     }
+}
+
+typedef struct {
+    secp256k1_scalar sc[2];
+    secp256k1_ge pt[2];
+} ecmult_multi_data;
+
+static int ecmult_multi_callback(secp256k1_scalar *sc, secp256k1_ge *pt, size_t idx, void *cbdata) {
+    ecmult_multi_data *data = (ecmult_multi_data*) cbdata;
+    *sc = data->sc[idx];
+    *pt = data->pt[idx];
+    return 1;
+}
+
+void test_exhaustive_ecmult_multi(const secp256k1_context *ctx, const secp256k1_ge *group, int order) {
+    int i, j, k, x, y;
+    secp256k1_scratch *scratch = secp256k1_scratch_create(&ctx->error_callback, 4096);
+    for (i = 0; i < order; i++) {
+        for (j = 0; j < order; j++) {
+            for (k = 0; k < order; k++) {
+                for (x = 0; x < order; x++) {
+                    for (y = 0; y < order; y++) {
+                        secp256k1_gej tmp;
+                        secp256k1_scalar g_sc;
+                        ecmult_multi_data data;
+
+                        secp256k1_scalar_set_int(&data.sc[0], i);
+                        secp256k1_scalar_set_int(&data.sc[1], j);
+                        secp256k1_scalar_set_int(&g_sc, k);
+                        data.pt[0] = group[x];
+                        data.pt[1] = group[y];
+
+                        secp256k1_ecmult_multi_var(&ctx->error_callback, &ctx->ecmult_ctx, scratch, &tmp, &g_sc, ecmult_multi_callback, &data, 2);
+                        ge_equals_gej(&group[(i * x + j * y + k) % order], &tmp);
+                    }
+                }
+            }
+        }
+    }
+    secp256k1_scratch_destroy(&ctx->error_callback, scratch);
 }
 
 void r_from_k(secp256k1_scalar *r, const secp256k1_ge *group, int k) {
@@ -249,7 +289,7 @@ void test_exhaustive_sign(const secp256k1_context *ctx, const secp256k1_ge *grou
     for (i = 1; i < order; i++) {  /* message */
         for (j = 1; j < order; j++) {  /* key */
             for (k = 1; k < order; k++) {  /* nonce */
-                int const starting_k = k;
+                const int starting_k = k;
                 secp256k1_ecdsa_signature sig;
                 secp256k1_scalar sk, msg, r, s, expected_r;
                 unsigned char sk32[32], msg32[32];
@@ -295,7 +335,7 @@ void test_exhaustive_recovery_sign(const secp256k1_context *ctx, const secp256k1
     for (i = 1; i < order; i++) {  /* message */
         for (j = 1; j < order; j++) {  /* key */
             for (k = 1; k < order; k++) {  /* nonce */
-                int const starting_k = k;
+                const int starting_k = k;
                 secp256k1_fe r_dot_y_normalized;
                 secp256k1_ecdsa_recoverable_signature rsig;
                 secp256k1_ecdsa_signature sig;
@@ -456,6 +496,7 @@ int main(void) {
 #endif
     test_exhaustive_addition(group, groupj, EXHAUSTIVE_TEST_ORDER);
     test_exhaustive_ecmult(ctx, group, groupj, EXHAUSTIVE_TEST_ORDER);
+    test_exhaustive_ecmult_multi(ctx, group, EXHAUSTIVE_TEST_ORDER);
     test_exhaustive_sign(ctx, group, EXHAUSTIVE_TEST_ORDER);
     test_exhaustive_verify(ctx, group, EXHAUSTIVE_TEST_ORDER);
 

@@ -9,7 +9,6 @@
 
 #include "include/secp256k1_schnorr.h"
 #include "modules/schnorr/schnorr_impl.h"
-// modules/schnorr/schnorr_impl.h
 
 int secp256k1_schnorr_verify(
     const secp256k1_context* ctx,

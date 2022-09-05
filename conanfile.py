@@ -25,6 +25,11 @@ class Secp256k1Conan(KnuthConanFile):
                "fPIC": [True, False],
                "enable_experimental": [True, False],
                "enable_endomorphism": [True, False],
+
+               "ecmult_window_size": "ANY",
+               "ecmult_gen_precision": "ANY",
+
+
                "enable_ecmult_static_precomputation": [True, False],
                "enable_module_ecdh": [True, False],
                "enable_module_schnorr": [True, False],
@@ -62,6 +67,10 @@ class Secp256k1Conan(KnuthConanFile):
         "fPIC": True,
         "enable_experimental": False,
         "enable_endomorphism": False,
+
+        "ecmult_window_size": 15,
+        "ecmult_gen_precision": 4,
+
         "enable_ecmult_static_precomputation": False,
         "enable_module_ecdh": False,
         "enable_module_schnorr": True,
@@ -136,6 +145,10 @@ class Secp256k1Conan(KnuthConanFile):
         # cmake.definitions["ENABLE_OPENSSL_TESTS"] = option_on_off(self.openssl_tests)
         cmake.definitions["ENABLE_EXPERIMENTAL"] = option_on_off(self.options.enable_experimental)
         cmake.definitions["ENABLE_ENDOMORPHISM"] = option_on_off(self.options.enable_endomorphism)
+
+        cmake.definitions["SECP256K1_ECMULT_WINDOW_SIZE"] = self.options.ecmult_window_size
+        cmake.definitions["SECP256K1_ECMULT_GEN_PRECISION"] = self.options.ecmult_gen_precision
+
         cmake.definitions["ENABLE_ECMULT_STATIC_PRECOMPUTATION"] = option_on_off(self.options.enable_ecmult_static_precomputation)
         cmake.definitions["ENABLE_MODULE_ECDH"] = option_on_off(self.options.enable_module_ecdh)
         cmake.definitions["ENABLE_MODULE_SCHNORR"] = option_on_off(self.options.enable_module_schnorr)

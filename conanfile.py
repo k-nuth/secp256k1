@@ -3,7 +3,7 @@
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 import os
-from conans import CMake
+from conan import CMake
 from kthbuild import option_on_off, march_conan_manip, pass_march_to_compiler
 from kthbuild import KnuthConanFile
 
@@ -96,10 +96,10 @@ class Secp256k1Conan(KnuthConanFile):
         # "with_bignum": 'auto'"
     }
 
-    generators = "cmake"
+    # generators = "cmake"
     exports = "conan_*", "ci_utils/*"
     exports_sources = "src/*", "include/*", "CMakeLists.txt", "cmake/*", "secp256k1Config.cmake.in", "contrib/*", "test/*"
-    build_policy = "missing"
+    # build_policy = "missing"
 
     @property
     def bignum_lib_name(self):
@@ -120,6 +120,8 @@ class Secp256k1Conan(KnuthConanFile):
 
     def validate(self):
         KnuthConanFile.validate(self)
+        if self.info.settings.compiler.cppstd:
+            check_min_cppstd(self, "20")
 
     def config_options(self):
         KnuthConanFile.config_options(self)
@@ -134,6 +136,15 @@ class Secp256k1Conan(KnuthConanFile):
         self.info.options.benchmark = "ANY"
         self.info.options.openssl_tests = "ANY"
 
+    def layout(self):
+        cmake_layout(self)
+
+    def generate(self):
+        tc = CMakeToolchain(self)
+        # tc.variables["CMAKE_VERBOSE_MAKEFILE"] = True
+        tc.generate()
+        tc = CMakeDeps(self)
+        tc.generate()
 
     def build(self):
         cmake = self.cmake_basis(pure_c=True)
@@ -167,7 +178,8 @@ class Secp256k1Conan(KnuthConanFile):
             if self.settings.compiler == "Visual Studio" and (self.settings.compiler.version != 12):
                 cmake.definitions["ENABLE_TESTS"] = option_on_off(False)   #Workaround. test broke MSVC
 
-        cmake.configure(source_dir=self.source_folder)
+        # cmake.configure(source_dir=self.source_folder)
+        cmake.configure()
         cmake.build()
 
         #TODO(fernando): Cmake Tests and Visual Studio doesn't work

@@ -170,6 +170,7 @@ jobs:
           CONAN_LOGIN_USERNAME_TAO: ${{ secrets.CONAN_LOGIN_USERNAME_TAO }}
           CONAN_PASSWORD_TAO: ${{ secrets.CONAN_PASSWORD_TAO }}
           CONAN_STABLE_BRANCH_PATTERN: "master$" #"release/*"
+          CONAN_DISABLE_STRICT_MODE: 1
           # CONAN_BUILD_POLICY: "missing"
         shell: bash
         run: |
@@ -183,6 +184,7 @@ jobs:
           echo ${CONAN_LOGIN_USERNAME_UPLOAD_REPO}
           echo ${CONAN_LOGIN_USERNAME_TAO}
           echo ${CONAN_DOCKER_ENTRY_SCRIPT}
+          echo ${CONAN_DISABLE_STRICT_MODE}
           # echo ${CONAN_BUILD_POLICY}
 
           export KTH_BRANCH=$(echo '${{ github.ref }}' | awk -F '/' '{print $3}')
@@ -201,6 +203,7 @@ jobs:
           CONAN_LOGIN_USERNAME_TAO: ${{ secrets.CONAN_LOGIN_USERNAME_TAO }}
           CONAN_PASSWORD_TAO: ${{ secrets.CONAN_PASSWORD_TAO }}
           CONAN_STABLE_BRANCH_PATTERN: "master$" #"release/*"
+          CONAN_DISABLE_STRICT_MODE: 1
           # CONAN_BUILD_POLICY: "missing"
 
         shell: powershell

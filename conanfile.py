@@ -119,7 +119,7 @@ class Secp256k1Conan(KnuthConanFile):
                 self.requires("gmp/6.2.1")
 
     def validate(self):
-        KnuthConanFile.validate(self)
+        KnuthConanFile.validate(self, pure_c=True)
         if self.info.settings.compiler.cppstd:
             check_min_cppstd(self, "20")
 
@@ -128,7 +128,7 @@ class Secp256k1Conan(KnuthConanFile):
 
     def configure(self):
         # del self.settings.compiler.libcxx       #Pure-C Library
-        KnuthConanFile.configure(self, pure_c=False)
+        KnuthConanFile.configure(self, pure_c=True)
 
     def package_id(self):
         KnuthConanFile.package_id(self)

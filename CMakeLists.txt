@@ -4,12 +4,7 @@
 
 cmake_minimum_required(VERSION 3.23)
 
-# secp256k1
-#==============================================================================
-project(secp256k1
-  VERSION 0
-  LANGUAGES C)
-  # VERSION 0.4.0
+project(secp256k1 VERSION 0 LANGUAGES C)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -17,12 +12,12 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 #==============================================================================
 # Implement --use-conan
 #------------------------------------------------------------------------------
-option(USE_CONAN "Use Conan Build Tool." OFF)
-option(NO_CONAN_AT_ALL "Conan totally disabled." OFF)
+# option(USE_CONAN "Use Conan Build Tool." OFF)
+# option(NO_CONAN_AT_ALL "Conan totally disabled." OFF)
 
-if (NO_CONAN_AT_ALL)
-  set(USE_CONAN OFF)
-endif()
+# if (NO_CONAN_AT_ALL)
+#   set(USE_CONAN OFF)
+# endif()
 
 
 # Inherit --enable-shared
@@ -87,6 +82,9 @@ message( STATUS "Knuth: CONAN_C_FLAGS ${CONAN_C_FLAGS}")
 #     message( STATUS "knuthbuildinfo doent exists")
 # endif()
 
+find_package(gmp REQUIRED)
+
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/ci_utils/cmake)
 
@@ -112,8 +110,7 @@ if (ENABLE_ECMULT_STATIC_PRECOMPUTATION)
 	# # include(NativeExecutable)
 	add_native_executable(gen_context src/gen_context.c)
 
-  target_include_directories(gen_context PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR})
+  target_include_directories(gen_context PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
   # target_include_directories(gen_context PUBLIC
   # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -127,13 +124,6 @@ if (ENABLE_ECMULT_STATIC_PRECOMPUTATION)
 	# target_sources(secp256k1 PRIVATE ecmult_static_context.h)
 
 endif()
-
-
-
-
-
-
-
 
 # Implement --with-asm
 #------------------------------------------------------------------------------
@@ -195,26 +185,26 @@ elseif (NOT WITH_FIELD STREQUAL "32bit")
   message(FATAL_ERROR "Invalid scalar implementation: ${WITH_SCALAR}")
 endif()
 
-#TODO(fernando): Bignum for Windows. See MPR (or something like this) that is a GMP for Windows.
-# Implement --with-bignum
-#------------------------------------------------------------------------------
-if (NO_CONAN_AT_ALL)
-  if (${WITH_BIGNUM} STREQUAL "auto")
-    _check_has_gmp()
-    if (HAS_GMP)
-      set(WITH_BIGNUM "gmp")
-    else()
-      set(WITH_BIGNUM "no")
-    endif()
-  elseif (WITH_BIGNUM STREQUAL "gmp")
-    _check_has_gmp()
-    if (NOT HAS_GMP)
-      message(FATAL_ERROR "gmp bignum explicitly requested but libgmp not available")
-    endif()
-  elseif (NOT ${WITH_BIGNUM} STREQUAL "no")
-    message(FATAL_ERROR "Invalid bignum implementation: ${WITH_BIGNUM}")
-  endif()
-endif()
+# #TODO(fernando): Bignum for Windows. See MPR (or something like this) that is a GMP for Windows.
+# # Implement --with-bignum
+# #------------------------------------------------------------------------------
+# if (NO_CONAN_AT_ALL)
+#   if (${WITH_BIGNUM} STREQUAL "auto")
+#     _check_has_gmp()
+#     if (HAS_GMP)
+#       set(WITH_BIGNUM "gmp")
+#     else()
+#       set(WITH_BIGNUM "no")
+#     endif()
+#   elseif (WITH_BIGNUM STREQUAL "gmp")
+#     _check_has_gmp()
+#     if (NOT HAS_GMP)
+#       message(FATAL_ERROR "gmp bignum explicitly requested but libgmp not available")
+#     endif()
+#   elseif (NOT ${WITH_BIGNUM} STREQUAL "no")
+#     message(FATAL_ERROR "Invalid bignum implementation: ${WITH_BIGNUM}")
+#   endif()
+# endif()
 
 
 if (ENABLE_SHARED)
@@ -226,9 +216,7 @@ endif()
 
 # Build
 #==============================================================================
-add_library(secp256k1 ${MODE}
-  include/secp256k1.h
-  src/secp256k1.c)
+add_library(secp256k1 ${MODE}   include/secp256k1.h   src/secp256k1.c)
 
 
 if (ENABLE_POSITION_INDEPENDENT_CODE)
@@ -291,10 +279,10 @@ if (${WITH_BIGNUM} STREQUAL "gmp")
   target_compile_definitions(secp256k1 PUBLIC -DUSE_FIELD_INV_NUM=1)
   target_compile_definitions(secp256k1 PUBLIC -DUSE_SCALAR_INV_NUM=1)
 
-  if (NO_CONAN_AT_ALL)
-    target_include_directories(secp256k1 PUBLIC ${GMP_INCLUDE_DIR})
-    target_link_libraries(secp256k1 ${GMP_LIBRARIES})
-  endif()
+  # if (NO_CONAN_AT_ALL)
+  #   target_include_directories(secp256k1 PUBLIC ${GMP_INCLUDE_DIR})
+  #   target_link_libraries(secp256k1 ${GMP_LIBRARIES})
+  # endif()
 elseif (${WITH_BIGNUM} STREQUAL "mpir")
   target_compile_definitions(secp256k1 PUBLIC -DHAVE_LIBGMP=1)
   target_compile_definitions(secp256k1 PUBLIC -DUSE_NUM_GMP=1)
@@ -319,14 +307,11 @@ if (ENABLE_ECMULT_STATIC_PRECOMPUTATION)
 	target_sources(secp256k1 PRIVATE ecmult_static_context.h)
 endif()
 
+# if (NOT NO_CONAN_AT_ALL)
+#   # target_link_libraries(secp256k1 PUBLIC ${CONAN_LIBS})
+# endif()
 
-
-# message(CONAN_LIBS)
-# message(${CONAN_LIBS})
-
-if (NOT NO_CONAN_AT_ALL)
-  # target_link_libraries(secp256k1 PUBLIC ${CONAN_LIBS})
-endif()
+target_link_libraries(secp256k1 gmp:gmp)
 
 if (ENABLE_MODULE_ECDH)
   target_compile_definitions(secp256k1 PUBLIC -DENABLE_MODULE_ECDH=1)

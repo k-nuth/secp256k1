@@ -23,14 +23,14 @@ jobs:
 
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         if: startsWith(github.ref, 'refs/heads/testci') ||
             startsWith(github.ref, 'refs/heads/release') ||
             startsWith(github.ref, 'refs/heads/hotfix')
 
         with:
           submodules: true
-      - uses: actions/setup-python@v1
+      - uses: actions/setup-python@v4
         if: startsWith(github.ref, 'refs/heads/testci') ||
             startsWith(github.ref, 'refs/heads/release') ||
             startsWith(github.ref, 'refs/heads/hotfix')
@@ -78,7 +78,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
 
@@ -110,10 +110,10 @@ jobs:
           # git config --global core.autocrlf true
           # git config --global --edit
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
-      - uses: actions/setup-python@v1
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.8"
 
@@ -261,10 +261,10 @@ jobs:
         startsWith(github.ref, 'refs/heads/feature')
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
-      - uses: actions/setup-python@v1
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.8"
 

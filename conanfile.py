@@ -140,7 +140,7 @@ class Secp256k1Conan(KnuthConanFile):
         cmake_layout(self)
 
     def generate(self):
-        # tc = CMakeToolchain(self)
+        # tc = self.cmake_toolchain_basis()
         tc = self.cmake_toolchain_basis(pure_c=True)
         # tc.variables["CMAKE_VERBOSE_MAKEFILE"] = True
 
@@ -179,7 +179,6 @@ class Secp256k1Conan(KnuthConanFile):
         tc.generate()
 
     def build(self):
-        # cmake = self.cmake_basis(pure_c=True)
         cmake = CMake(self)
         cmake.configure()
         cmake.build()

@@ -311,7 +311,7 @@ endif()
 #   # target_link_libraries(secp256k1 PUBLIC ${CONAN_LIBS})
 # endif()
 
-target_link_libraries(secp256k1 gmp:gmp)
+target_link_libraries(secp256k1 gmp::gmp)
 
 if (ENABLE_MODULE_ECDH)
   target_compile_definitions(secp256k1 PUBLIC -DENABLE_MODULE_ECDH=1)

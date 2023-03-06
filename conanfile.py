@@ -142,43 +142,44 @@ class Secp256k1Conan(KnuthConanFile):
     def generate(self):
         tc = CMakeToolchain(self)
         # tc.variables["CMAKE_VERBOSE_MAKEFILE"] = True
+
+        tc.variables["ENABLE_BENCHMARK"] = option_on_off(self.options.benchmark)
+        tc.variables["ENABLE_TESTS"] = option_on_off(self.options.tests)
+        tc.variables["ENABLE_OPENSSL_TESTS"] = option_on_off(self.options.openssl_tests)
+        # tc.variables["ENABLE_BENCHMARK"] = option_on_off(self.benchmark)
+        # tc.variables["ENABLE_TESTS"] = option_on_off(self.tests)
+        # tc.variables["ENABLE_OPENSSL_TESTS"] = option_on_off(self.openssl_tests)
+        tc.variables["ENABLE_EXPERIMENTAL"] = option_on_off(self.options.enable_experimental)
+        tc.variables["ENABLE_ENDOMORPHISM"] = option_on_off(self.options.enable_endomorphism)
+
+        tc.variables["SECP256K1_ECMULT_WINDOW_SIZE"] = self.options.ecmult_window_size
+        tc.variables["SECP256K1_ECMULT_GEN_PRECISION"] = self.options.ecmult_gen_precision
+
+        tc.variables["ENABLE_ECMULT_STATIC_PRECOMPUTATION"] = option_on_off(self.options.enable_ecmult_static_precomputation)
+        tc.variables["ENABLE_MODULE_ECDH"] = option_on_off(self.options.enable_module_ecdh)
+        tc.variables["ENABLE_MODULE_SCHNORR"] = option_on_off(self.options.enable_module_schnorr)
+        tc.variables["ENABLE_MODULE_RECOVERY"] = option_on_off(self.options.enable_module_recovery)
+        tc.variables["ENABLE_MODULE_MULTISET"] = option_on_off(self.options.enable_module_multiset)
+        tc.variables["CONAN_DISABLE_CHECK_COMPILER"] = option_on_off(True)
+
+        self.output.info("Bignum lib selected: %s" % (self.bignum_lib_name,))
+        tc.variables["WITH_BIGNUM"] = self.bignum_lib_name
+        # tc.variables["WITH_ASM"] = option_on_off(self.options.with_asm)
+        # tc.variables["WITH_FIELD"] = option_on_off(self.options.with_field)
+        # tc.variables["WITH_SCALAR"] = option_on_off(self.options.with_scalar)
+        # tc.variables["WITH_BIGNUM"] = option_on_off(self.options.with_bignum)
+
+        if self.settings.os == "Windows":
+            if self.settings.compiler == "Visual Studio" and (self.settings.compiler.version != 12):
+                tc.variables["ENABLE_TESTS"] = option_on_off(False)   #Workaround. test broke MSVC
+
         tc.generate()
         tc = CMakeDeps(self)
         tc.generate()
 
     def build(self):
-        cmake = self.cmake_basis(pure_c=True)
-        cmake.definitions["ENABLE_BENCHMARK"] = option_on_off(self.options.benchmark)
-        cmake.definitions["ENABLE_TESTS"] = option_on_off(self.options.tests)
-        cmake.definitions["ENABLE_OPENSSL_TESTS"] = option_on_off(self.options.openssl_tests)
-        # cmake.definitions["ENABLE_BENCHMARK"] = option_on_off(self.benchmark)
-        # cmake.definitions["ENABLE_TESTS"] = option_on_off(self.tests)
-        # cmake.definitions["ENABLE_OPENSSL_TESTS"] = option_on_off(self.openssl_tests)
-        cmake.definitions["ENABLE_EXPERIMENTAL"] = option_on_off(self.options.enable_experimental)
-        cmake.definitions["ENABLE_ENDOMORPHISM"] = option_on_off(self.options.enable_endomorphism)
-
-        cmake.definitions["SECP256K1_ECMULT_WINDOW_SIZE"] = self.options.ecmult_window_size
-        cmake.definitions["SECP256K1_ECMULT_GEN_PRECISION"] = self.options.ecmult_gen_precision
-
-        cmake.definitions["ENABLE_ECMULT_STATIC_PRECOMPUTATION"] = option_on_off(self.options.enable_ecmult_static_precomputation)
-        cmake.definitions["ENABLE_MODULE_ECDH"] = option_on_off(self.options.enable_module_ecdh)
-        cmake.definitions["ENABLE_MODULE_SCHNORR"] = option_on_off(self.options.enable_module_schnorr)
-        cmake.definitions["ENABLE_MODULE_RECOVERY"] = option_on_off(self.options.enable_module_recovery)
-        cmake.definitions["ENABLE_MODULE_MULTISET"] = option_on_off(self.options.enable_module_multiset)
-        cmake.definitions["CONAN_DISABLE_CHECK_COMPILER"] = option_on_off(True)
-
-        self.output.info("Bignum lib selected: %s" % (self.bignum_lib_name,))
-        cmake.definitions["WITH_BIGNUM"] = self.bignum_lib_name
-        # cmake.definitions["WITH_ASM"] = option_on_off(self.options.with_asm)
-        # cmake.definitions["WITH_FIELD"] = option_on_off(self.options.with_field)
-        # cmake.definitions["WITH_SCALAR"] = option_on_off(self.options.with_scalar)
-        # cmake.definitions["WITH_BIGNUM"] = option_on_off(self.options.with_bignum)
-
-        if self.settings.os == "Windows":
-            if self.settings.compiler == "Visual Studio" and (self.settings.compiler.version != 12):
-                cmake.definitions["ENABLE_TESTS"] = option_on_off(False)   #Workaround. test broke MSVC
-
-        # cmake.configure(source_dir=self.source_folder)
+        # cmake = self.cmake_basis(pure_c=True)
+        cmake = CMake(self)
         cmake.configure()
         cmake.build()
 

@@ -140,7 +140,8 @@ class Secp256k1Conan(KnuthConanFile):
         cmake_layout(self)
 
     def generate(self):
-        tc = CMakeToolchain(self)
+        # tc = CMakeToolchain(self)
+        tc = self.cmake_toolchain_basis(pure_c=True)
         # tc.variables["CMAKE_VERBOSE_MAKEFILE"] = True
 
         tc.variables["ENABLE_BENCHMARK"] = option_on_off(self.options.benchmark)

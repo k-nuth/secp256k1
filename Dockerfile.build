@@ -3,4 +3,7 @@ FROM alpine:3.17
 RUN apk update && apk add --no-cache \
         gcc g++ build-base linux-headers \
         cmake bash libstdc++ perl tar git \
-        py-pip && pip install "conan>=1.50.0,<2.0"
+        py-pip && \
+        pip install "six<=1.15.0,>=1.10.0" && \
+        pip install "conan>=1.50.0,<2.0"
+

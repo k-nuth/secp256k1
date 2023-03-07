@@ -159,7 +159,7 @@ jobs:
           key: alpine-${{ hashFiles('**/conan.lock') }}
       - uses: ./.github/actions/setup-conan
       - name: conan login
-        run: conan user -p ${{ secrets.CONAN_PASSWORD_TAO }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME_TAO }}
+        run: conan user -p ${{ secrets.CONAN_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
       - name: build order
         working-directory: .
         run: |
@@ -195,7 +195,7 @@ jobs:
       - if: ${{ matrix.reference != 'null' }}
         uses: ./.github/actions/setup-conan
       - if: ${{ matrix.reference != 'null' }}
-        run: conan user -p ${{ secrets.CONAN_PASSWORD_TAO }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME_TAO }}
+        run: conan user -p ${{ secrets.CONAN_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
       - name: download
         if: ${{ matrix.reference != 'null' }}
         uses: actions/download-artifact@v3
@@ -310,8 +310,6 @@ jobs:
           CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
           CONAN_LOGIN_USERNAME_UPLOAD_REPO: ${{ secrets.CONAN_LOGIN_USERNAME_UPLOAD_REPO }}
           CONAN_PASSWORD_UPLOAD_REPO: ${{ secrets.CONAN_PASSWORD_UPLOAD_REPO }}
-          CONAN_LOGIN_USERNAME_TAO: ${{ secrets.CONAN_LOGIN_USERNAME_TAO }}
-          CONAN_PASSWORD_TAO: ${{ secrets.CONAN_PASSWORD_TAO }}
           CONAN_STABLE_BRANCH_PATTERN: "master$" #"release/*"
           CONAN_DISABLE_STRICT_MODE: 1          # Remove after implementing Conan v2
           # CONAN_BUILD_POLICY: "missing"
@@ -325,7 +323,7 @@ jobs:
           echo ${CONAN_DOCKER_IMAGE}
           echo ${CONAN_LOGIN_USERNAME}
           echo ${CONAN_LOGIN_USERNAME_UPLOAD_REPO}
-          echo ${CONAN_LOGIN_USERNAME_TAO}
+          echo ${CONAN_LOGIN_USERNAME}
           echo ${CONAN_DOCKER_ENTRY_SCRIPT}
           echo ${CONAN_DISABLE_STRICT_MODE}
           # echo ${CONAN_BUILD_POLICY}
@@ -343,8 +341,6 @@ jobs:
           CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
           CONAN_LOGIN_USERNAME_UPLOAD_REPO: ${{ secrets.CONAN_LOGIN_USERNAME_UPLOAD_REPO }}
           CONAN_PASSWORD_UPLOAD_REPO: ${{ secrets.CONAN_PASSWORD_UPLOAD_REPO }}
-          CONAN_LOGIN_USERNAME_TAO: ${{ secrets.CONAN_LOGIN_USERNAME_TAO }}
-          CONAN_PASSWORD_TAO: ${{ secrets.CONAN_PASSWORD_TAO }}
           CONAN_STABLE_BRANCH_PATTERN: "master$" #"release/*"
           CONAN_DISABLE_STRICT_MODE: 1          # Remove after implementing Conan v2
           # CONAN_BUILD_POLICY: "missing"
@@ -425,8 +421,6 @@ jobs:
   #         CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
   #         CONAN_LOGIN_USERNAME_UPLOAD_REPO: ${{ secrets.CONAN_LOGIN_USERNAME_UPLOAD_REPO }}
   #         CONAN_PASSWORD_UPLOAD_REPO: ${{ secrets.CONAN_PASSWORD_UPLOAD_REPO }}
-  #         CONAN_LOGIN_USERNAME_TAO: ${{ secrets.CONAN_LOGIN_USERNAME_TAO }}
-  #         CONAN_PASSWORD_TAO: ${{ secrets.CONAN_PASSWORD_TAO }}
   #         CONAN_BUILD_POLICY: "missing"
   #       shell: bash
   #       run: |

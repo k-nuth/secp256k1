@@ -187,10 +187,11 @@ jobs:
       image: ${{ needs.build-base-docker-image.outputs.name }}
       credentials:
         username: ${{ github.repository_owner }}
-        # password: ${{ github.token }}
-        password: ${{ secrets.GIT_DOCKER_PAT }}
+        password: ${{ github.token }}
+        # password: ${{ secrets.GIT_DOCKER_PAT }}
     strategy:
       matrix: ${{ fromJson(needs.calc-deps.outputs.matrix) }}
+    name: ${{ matrix.include.name }}
     steps:
       - uses: actions/checkout@v3
       - if: ${{ matrix.reference != 'null' }}
@@ -211,7 +212,6 @@ jobs:
         if: ${{ matrix.reference != 'null' }}
         run: conan upload ${{ matrix.reference }} -r $CONAN_REMOTE --all
       - run: exit 0
-
 
   generate-matrix:
     name: Generate Job Matrix
@@ -236,7 +236,7 @@ jobs:
           # echo "::set-output name=${JSON//'%'/'%25'}"
 
   builds:
-    needs: generate-matrix
+    needs: [build-deps, generate-matrix]
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false

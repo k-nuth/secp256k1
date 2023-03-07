@@ -3,20 +3,7 @@ import json
 def main():
     matrix = {"include": []}
 
-#     "config":
-#         [
-#             {"name": "Linux GCC 11",
-#              "compiler": "GCC",
-#              "version": "11",
-#              "os": "ubuntu-20.04",
-#              "docker_suffix": "-ubuntu16.04"
-#             },
-
-#             {"name": "macOS apple-clang 13","compiler": "apple-clang","version": "13","os": "macos-12"}]}
-
-
-
-    with open("./ci_utils/.github/matrix.json", "r") as platform_file:
+    with open("platform.json", "r") as platform_file:
         platform_data = json.load(platform_file)
 
         with open("build_order.json", "r") as read_file:

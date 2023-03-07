@@ -173,6 +173,7 @@ jobs:
       - id: set-matrix
         name: output
         run: |
+          cp ./ci_utils/.github/matrix.json platform.json
           echo $(cat build_order.json)
           # cd backend
           python3 build-order-to-matrix.py

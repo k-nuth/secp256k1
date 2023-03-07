@@ -1,0 +1,20 @@
+{
+ "graph_lock": {
+  "nodes": {
+   "0": {
+    "ref": "secp256k1/0.0.0-dev.1",
+    "requires": [
+     "1"
+    ],
+    "path": "conanfile.py",
+    "context": "host"
+   },
+   "1": {
+    "ref": "gmp/6.2.1#9cd6e4a851f6ffd6ea5b5d563f23abcc",
+    "context": "host"
+   }
+  },
+  "revisions_enabled": true
+ },
+ "version": "0.4"
+}

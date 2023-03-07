@@ -5,7 +5,7 @@
 import os
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
 from kthbuild import option_on_off, march_conan_manip, pass_march_to_compiler
-from kthbuild import KnuthConanFile
+from kthbuild import KnuthConanFileV2
 
 class Secp256k1Conan(KnuthConanFileV2):
     def recipe_dir(self):
@@ -118,19 +118,19 @@ class Secp256k1Conan(KnuthConanFileV2):
                 self.requires("gmp/6.2.1")
 
     def validate(self):
-        KnuthConanFile.validate(self, pure_c=True)
+        KnuthConanFileV2.validate(self, pure_c=True)
         if self.info.settings.compiler.cppstd:
             check_min_cppstd(self, "20")
 
     def config_options(self):
-        KnuthConanFile.config_options(self)
+        KnuthConanFileV2.config_options(self)
 
     def configure(self):
         # del self.settings.compiler.libcxx       #Pure-C Library
-        KnuthConanFile.configure(self, pure_c=True)
+        KnuthConanFileV2.configure(self, pure_c=True)
 
     def package_id(self):
-        KnuthConanFile.package_id(self)
+        KnuthConanFileV2.package_id(self)
 
         self.info.options.benchmark = "ANY"
         self.info.options.openssl_tests = "ANY"

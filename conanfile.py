@@ -7,12 +7,11 @@ from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
 from kthbuild import option_on_off, march_conan_manip, pass_march_to_compiler
 from kthbuild import KnuthConanFile
 
-class Secp256k1Conan(KnuthConanFile):
+class Secp256k1Conan(KnuthConanFileV2):
     def recipe_dir(self):
         return os.path.dirname(os.path.abspath(__file__))
 
     name = "secp256k1"
-    # version = get_version()
     license = "http://www.boost.org/users/license.html"
     url = "https://github.com/k-nuth/secp256k1"
     description = "Optimized C library for EC operations on curve secp256k1"
@@ -140,7 +139,6 @@ class Secp256k1Conan(KnuthConanFile):
         cmake_layout(self)
 
     def generate(self):
-        # tc = self.cmake_toolchain_basis()
         tc = self.cmake_toolchain_basis(pure_c=True)
         # tc.variables["CMAKE_VERBOSE_MAKEFILE"] = True
 

@@ -162,7 +162,9 @@ jobs:
       - uses: ./.github/actions/setup-conan
       - uses: ./.github/actions/setup-kthbuild
       - name: conan login
-        run: conan user -p ${{ secrets.CONAN_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
+        # run: conan user -p ${{ secrets.CONAN_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
+        run: conan remote login -p ${{ secrets.CONAN_PASSWORD }} $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
+
       - name: build order
         working-directory: .
         run: |
@@ -202,7 +204,8 @@ jobs:
       - if: ${{ matrix.reference != 'null' }}
         uses: ./.github/actions/setup-kthbuild
       - if: ${{ matrix.reference != 'null' }}
-        run: conan user -p ${{ secrets.CONAN_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
+        # run: conan user -p ${{ secrets.CONAN_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
+        run: conan remote login -p ${{ secrets.CONAN_PASSWORD }} $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
       - name: download
         if: ${{ matrix.reference != 'null' }}
         uses: actions/download-artifact@v3

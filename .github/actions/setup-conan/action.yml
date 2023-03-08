@@ -9,7 +9,12 @@ runs:
       shell: bash
     - run: python3 -m pip install "conan_package_tools==0.39.0" --upgrade --ignore-installed
       shell: bash
-    - run: conan config init --force
+
+    # - run: conan config init --force
+    #   shell: bash
+    - run: conan profile detect
       shell: bash
+
+
     - run: conan config install -t dir .conan
       shell: bash

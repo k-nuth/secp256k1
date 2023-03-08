@@ -1,3 +1,0 @@
-conancenter https://center.conan.io true
-kth https://knuth.jfrog.io/artifactory/api/conan/knuth true
-tao https://taocpp.jfrog.io/artifactory/api/conan/tao true

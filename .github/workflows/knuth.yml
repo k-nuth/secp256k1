@@ -169,7 +169,8 @@ jobs:
         working-directory: .
         run: |
           conan lock create conanfile.py --version $BUILD_VERSION --lockfile=conan.lock --lockfile-out=build/conan.lock -pr linux-ci-cd -s build_type=Release
-          conan lock build-order build/conan.lock --json=build_order.json
+          # conan lock build-order build/conan.lock --json=build_order.json
+          conan graph build-order conanfile.py --lockfile=build/conan.lock -f json > build_order.json
       - uses: actions/upload-artifact@v3
         with:
           name: conan-lockfile

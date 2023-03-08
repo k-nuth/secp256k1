@@ -121,21 +121,22 @@ class Secp256k1Conan(ConanFile):
                 self.requires("gmp/6.2.1")
 
     def validate(self):
-        # KnuthConanFileV2.validate(self, pure_c=True)
+        KnuthConanFileV2.validate(self, pure_c=True)
         if self.info.settings.compiler.cppstd:
             check_min_cppstd(self, "20")
 
-    # def config_options(self):
-    #     ConanFile.config_options(self)
-    #     # KnuthConanFileV2.config_options(self)
+    def config_options(self):
+        # ConanFile.config_options(self)
+        KnuthConanFileV2.config_options(self)
 
     def configure(self):
         # del self.settings.compiler.libcxx       #Pure-C Library
-        # KnuthConanFileV2.configure(self, pure_c=True)
-        ConanFile.configure(self)
+        KnuthConanFileV2.configure(self, pure_c=True)
 
     def package_id(self):
-        # KnuthConanFileV2.package_id(self)
+        KnuthConanFileV2.package_id(self)
+        # v = str(self.info.settings.compiler.version)
+        # self.output.info(f'********* version: {v}')
 
         self.info.options.benchmark = ["ANY"]
         self.info.options.openssl_tests = ["ANY"]

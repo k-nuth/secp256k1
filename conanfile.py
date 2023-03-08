@@ -3,11 +3,14 @@
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 import os
+from conan import ConanFile
+from conan.tools.build.cppstd import check_min_cppstd
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
 from kthbuild import option_on_off, march_conan_manip, pass_march_to_compiler
 from kthbuild import KnuthConanFileV2
 
-class Secp256k1Conan(KnuthConanFileV2):
+# class Secp256k1Conan(KnuthConanFileV2):
+class Secp256k1Conan(ConanFile):
     def recipe_dir(self):
         return os.path.dirname(os.path.abspath(__file__))
 
@@ -25,8 +28,8 @@ class Secp256k1Conan(KnuthConanFileV2):
                "enable_experimental": [True, False],
                "enable_endomorphism": [True, False],
 
-               "ecmult_window_size": "ANY",
-               "ecmult_gen_precision": "ANY",
+               "ecmult_window_size": ["ANY"],
+               "ecmult_gen_precision": ["ANY"],
 
 
                "enable_ecmult_static_precomputation": [True, False],
@@ -39,12 +42,12 @@ class Secp256k1Conan(KnuthConanFileV2):
                "openssl_tests": [True, False],
                "bignum_lib": [True, False],
 
-               "march_id": "ANY",
+               "march_id": ["ANY"],
                "march_strategy": ["download_if_possible", "optimized", "download_or_fail"],
 
                "verbose": [True, False],
-               "cxxflags": "ANY",
-               "cflags": "ANY",
+               "cxxflags": ["ANY"],
+               "cflags": ["ANY"],
                "cmake_export_compile_commands": [True, False],
 
 
@@ -118,22 +121,24 @@ class Secp256k1Conan(KnuthConanFileV2):
                 self.requires("gmp/6.2.1")
 
     def validate(self):
-        KnuthConanFileV2.validate(self, pure_c=True)
+        # KnuthConanFileV2.validate(self, pure_c=True)
         if self.info.settings.compiler.cppstd:
             check_min_cppstd(self, "20")
 
-    def config_options(self):
-        KnuthConanFileV2.config_options(self)
+    # def config_options(self):
+    #     ConanFile.config_options(self)
+    #     # KnuthConanFileV2.config_options(self)
 
     def configure(self):
         # del self.settings.compiler.libcxx       #Pure-C Library
-        KnuthConanFileV2.configure(self, pure_c=True)
+        # KnuthConanFileV2.configure(self, pure_c=True)
+        ConanFile.configure(self)
 
     def package_id(self):
-        KnuthConanFileV2.package_id(self)
+        # KnuthConanFileV2.package_id(self)
 
-        self.info.options.benchmark = "ANY"
-        self.info.options.openssl_tests = "ANY"
+        self.info.options.benchmark = ["ANY"]
+        self.info.options.openssl_tests = ["ANY"]
 
     def layout(self):
         cmake_layout(self)

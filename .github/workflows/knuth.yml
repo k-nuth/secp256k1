@@ -231,8 +231,12 @@ jobs:
     steps:
       - name: Print OS
         run: |
-          echo "OS:   ${{ matrix.include.os }}"
-          echo "Name: ${{ matrix.include.name }}"
+          echo "Matrix 1:   ${{ matrix }}"
+          echo "Matrix 2:   ${{ needs.calc-deps.outputs.matrix }}"
+          echo "Matrix 3:   ${{ fromJson(needs.calc-deps.outputs.matrix) }}"
+          echo "Include     ${{ matrix.include }}"
+          echo "OS:         ${{ matrix.include.os }}"
+          echo "Name:       ${{ matrix.include.name }}"
 
       # - uses: actions/checkout@v3
       # - if: ${{ matrix.reference != 'null' }}

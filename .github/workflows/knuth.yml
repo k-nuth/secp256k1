@@ -210,6 +210,7 @@ jobs:
     strategy:
       matrix: ${{ fromJson(needs.calc-deps.outputs.matrix) }}
     name: ${{ matrix.config.name }}
+    if: ${{ matrix.config.compiler == 'GCC' }}
 
     # if: ${{ matrix.config.compiler == 'GCC' }}
     # runs-on: ubuntu-latest
@@ -224,7 +225,6 @@ jobs:
     #     password: ${{ github.token }}
 
     container:
-      if: ${{ matrix.config.compiler == 'GCC' }}
       image: "hub.docker.com/r/conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
         # echo "CONAN_DOCKER_IMAGE=conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}" >> $GITHUB_ENV
 

@@ -190,11 +190,11 @@ jobs:
       matrix: ${{ fromJson(needs.calc-deps.outputs.matrix) }}
     name: ${{ matrix.config.name }}
     uses: ./.github/workflows/build-deps-with-container.yml
-      with:
-        if: ${{ matrix.config.compiler == 'GCC' }}
-        os: ${{ matrix.config.os }}
-        image: "hub.docker.com/r/conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
-        other: "this is other value"
+    with:
+      if: ${{ matrix.config.compiler == 'GCC' }}
+      os: ${{ matrix.config.os }}
+      image: "hub.docker.com/r/conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
+      other: "this is other value"
 
 
 # https://hub.docker.com/r/conanio/gcc11/

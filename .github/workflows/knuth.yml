@@ -223,9 +223,8 @@ jobs:
     #     username: ${{ github.repository_owner }}
     #     password: ${{ github.token }}
 
-
-    if: ${{ matrix.config.compiler == 'GCC' }}
     container:
+      if: ${{ matrix.config.compiler == 'GCC' }}
       image: "hub.docker.com/r/conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
         # echo "CONAN_DOCKER_IMAGE=conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}" >> $GITHUB_ENV
 

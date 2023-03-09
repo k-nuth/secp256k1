@@ -192,9 +192,9 @@ jobs:
       matrix: ${{ fromJson(needs.calc-deps.outputs.matrix) }}
     name: ${{ matrix.include.name }}
 
-    if: ${{ matrix.include.compiler == 'GCC' }}
-    runs-on: ubuntu-latest
-    if: ${{ matrix.include.compiler != 'GCC' }}
+    # if: ${{ matrix.include.compiler == 'GCC' }}
+    # runs-on: ubuntu-latest
+    # if: ${{ matrix.include.compiler != 'GCC' }}
     runs-on: ${{ matrix.include.os }}
 
     if: ${{ matrix.include.compiler == 'GCC' }}

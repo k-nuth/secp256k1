@@ -184,6 +184,25 @@ jobs:
           echo "${MATRIX}"
           echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
 
+
+{"include":
+  [
+    {"name": "Linux GCC 11 - gmp/6.2.1#9cd6e4a851f6ffd6ea5b5d563f23abcc", "compiler": "GCC", "version": "11", "os": "ubuntu-20.04", "docker_suffix": "-ubuntu16.04", "reference": "gmp/6.2.1#9cd6e4a851f6ffd6ea5b5d563f23abcc"},
+    {"name": "macOS apple-clang 13 - gmp/6.2.1#9cd6e4a851f6ffd6ea5b5d563f23abcc", "compiler": "apple-clang", "version": "13", "os": "macos-12", "reference": "gmp/6.2.1#9cd6e4a851f6ffd6ea5b5d563f23abcc"}
+  ]
+}
+
+{"config":
+  [
+      {"name": "Linux GCC 11","compiler": "GCC","version": "11","os": "ubuntu-20.04","docker_suffix": "-ubuntu16.04"},
+      {"name": "macOS apple-clang 13","compiler": "apple-clang","version": "13","os": "macos-12"}
+  ]
+
+
+# {"include": [{"name": "Linux GCC 11 - gmp/6.2.1#9cd6e4a851f6ffd6ea5b5d563f23abcc", "compiler": "GCC", "version": "11", "os": "ubuntu-20.04", "docker_suffix": "-ubuntu16.04", "reference": "gmp/6.2.1#9cd6e4a851f6ffd6ea5b5d563f23abcc"}, {"name": "macOS apple-clang 13 - gmp/6.2.1#9cd6e4a851f6ffd6ea5b5d563f23abcc", "compiler": "apple-clang", "version": "13", "os": "macos-12", "reference": "gmp/6.2.1#9cd6e4a851f6ffd6ea5b5d563f23abcc"}]}%}
+# {"config": [{"name": "Linux GCC 11","compiler": "GCC","version": "11","os": "ubuntu-20.04","docker_suffix": "-ubuntu16.04"},{"name": "macOS apple-clang 13","compiler": "apple-clang","version": "13","os": "macos-12"}]}
+
+
 # https://hub.docker.com/r/conanio/gcc11/
 
   build-deps:

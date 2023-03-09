@@ -22,6 +22,7 @@ def main():
     # print(matrix)
     with open("matrix.json", "w") as write_file:
         json.dump(matrix, write_file)
+        write_file.write("\n")
 
 if __name__ == "__main__":
     main()

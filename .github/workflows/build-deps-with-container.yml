@@ -14,6 +14,14 @@ on:
       reference:
         required: true
         type: string
+      conan-remote:
+        required: true
+        type: string
+    secrets:
+      conan-user:
+        required: true
+      conan-password:
+        required: true
 jobs:
   reusable-build-deps-with-container:
     if: ${{ inputs.if }}
@@ -27,8 +35,7 @@ jobs:
       - if: ${{ inputs.reference != 'null' }}
         uses: ./.github/actions/setup-kthbuild
       - if: ${{ inputs.reference != 'null' }}
-        # run: conan user -p ${{ secrets.CONAN_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
-        run: conan remote login -p ${{ secrets.CONAN_PASSWORD }} $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
+        run: conan remote login -p ${{ secrets.conan-password }} ${{ inputs.conan-remote }} ${{ secrets.conan-user }}
       - name: download
         if: ${{ inputs.reference != 'null' }}
         uses: actions/download-artifact@v3
@@ -39,5 +46,5 @@ jobs:
         run: conan install --requires=${{ inputs.reference }} -l conan.lock -b missing
       - name: upload
         if: ${{ inputs.reference != 'null' }}
-        run: conan upload ${{ inputs.reference }} -r $CONAN_REMOTE # --all
+        run: conan upload ${{ inputs.reference }} -r ${{ inputs.conan-remote }} # --all
       - run: exit 0

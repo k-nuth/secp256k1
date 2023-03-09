@@ -195,9 +195,14 @@ jobs:
       os: ${{ matrix.config.os }}
       image: "conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
       reference: ${{ matrix.config.reference }}
+      conan-remote: ${{ CONAN_REMOTE }}
+    secrets:
+      conan-user: ${{ secrets.CONAN_LOGIN_USERNAME }}
+      conan-password: ${{ secrets.CONAN_PASSWORD }}
 
 
-# https://hub.docker.com/r/conanio/gcc11/
+
+
 
   # build-deps:
   #   needs: [build-base-docker-image, calc-deps]

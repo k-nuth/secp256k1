@@ -311,7 +311,7 @@ jobs:
           # # echo "::set-output name=${JSON//'%'/'%25'}"
 
   builds:
-    needs: [build-deps, generate-matrix]
+    needs: [build-deps-with-container, generate-matrix]
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false

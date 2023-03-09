@@ -184,80 +184,74 @@ jobs:
           echo "${MATRIX}"
           echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
 
-
-# {"include":
-#   [
-#     {"name": "Linux GCC 11 - gmp/6.2.1#9cd6e4a851f6ffd6ea5b5d563f23abcc", "compiler": "GCC", "version": "11", "os": "ubuntu-20.04", "docker_suffix": "-ubuntu16.04", "reference": "gmp/6.2.1#9cd6e4a851f6ffd6ea5b5d563f23abcc"},
-#     {"name": "macOS apple-clang 13 - gmp/6.2.1#9cd6e4a851f6ffd6ea5b5d563f23abcc", "compiler": "apple-clang", "version": "13", "os": "macos-12", "reference": "gmp/6.2.1#9cd6e4a851f6ffd6ea5b5d563f23abcc"}
-#   ]
-# }
-
-# {"config":
-#   [
-#       {"name": "Linux GCC 11","compiler": "GCC","version": "11","os": "ubuntu-20.04","docker_suffix": "-ubuntu16.04"},
-#       {"name": "macOS apple-clang 13","compiler": "apple-clang","version": "13","os": "macos-12"}
-#   ]
-
-
-# {"include": [{"name": "Linux GCC 11 - gmp/6.2.1#9cd6e4a851f6ffd6ea5b5d563f23abcc", "compiler": "GCC", "version": "11", "os": "ubuntu-20.04", "docker_suffix": "-ubuntu16.04", "reference": "gmp/6.2.1#9cd6e4a851f6ffd6ea5b5d563f23abcc"}, {"name": "macOS apple-clang 13 - gmp/6.2.1#9cd6e4a851f6ffd6ea5b5d563f23abcc", "compiler": "apple-clang", "version": "13", "os": "macos-12", "reference": "gmp/6.2.1#9cd6e4a851f6ffd6ea5b5d563f23abcc"}]}%}
-# {"config": [{"name": "Linux GCC 11","compiler": "GCC","version": "11","os": "ubuntu-20.04","docker_suffix": "-ubuntu16.04"},{"name": "macOS apple-clang 13","compiler": "apple-clang","version": "13","os": "macos-12"}]}
-
-
-# https://hub.docker.com/r/conanio/gcc11/
-
-  build-deps:
+  build-deps-with-container:
     needs: [build-base-docker-image, calc-deps]
     strategy:
       matrix: ${{ fromJson(needs.calc-deps.outputs.matrix) }}
     name: ${{ matrix.config.name }}
-    if: ${{ matrix.config.compiler == 'GCC' }}
+    uses: ./.github/workflows/build-deps-with-container.yml
+      with:
+        if: ${{ matrix.config.compiler == 'GCC' }}
+        os: ${{ matrix.config.os }}
+        image: "hub.docker.com/r/conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
+        other: "this is other value"
 
-    # if: ${{ matrix.config.compiler == 'GCC' }}
-    # runs-on: ubuntu-latest
-    # if: ${{ matrix.config.compiler != 'GCC' }}
-    runs-on: ${{ matrix.config.os }}
 
-    # if: ${{ matrix.config.compiler == 'GCC' }}
-    # container:
-    #   image: ${{ needs.build-base-docker-image.outputs.name }}
-    #   credentials:
-    #     username: ${{ github.repository_owner }}
-    #     password: ${{ github.token }}
+# https://hub.docker.com/r/conanio/gcc11/
 
-    container:
-      image: "hub.docker.com/r/conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
-        # echo "CONAN_DOCKER_IMAGE=conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}" >> $GITHUB_ENV
+  # build-deps:
+  #   needs: [build-base-docker-image, calc-deps]
+  #   strategy:
+  #     matrix: ${{ fromJson(needs.calc-deps.outputs.matrix) }}
+  #   name: ${{ matrix.config.name }}
+  #   if: ${{ matrix.config.compiler == 'GCC' }}
 
-    steps:
-      - name: Print OS
-        run: |
-          echo "Matrix 1:   ${{ matrix }}"
-          echo "Matrix 2:   ${{ needs.calc-deps.outputs.matrix }}"
-          echo "Matrix 3:   ${{ fromJson(needs.calc-deps.outputs.matrix) }}"
-          echo "Include     ${{ matrix.config }}"
-          echo "OS:         ${{ matrix.config.os }}"
-          echo "Name:       ${{ matrix.config.name }}"
+  #   # if: ${{ matrix.config.compiler == 'GCC' }}
+  #   # runs-on: ubuntu-latest
+  #   # if: ${{ matrix.config.compiler != 'GCC' }}
+  #   runs-on: ${{ matrix.config.os }}
 
-      # - uses: actions/checkout@v3
-      # - if: ${{ matrix.reference != 'null' }}
-      #   uses: ./.github/actions/setup-conan
-      # - if: ${{ matrix.reference != 'null' }}
-      #   uses: ./.github/actions/setup-kthbuild
-      # - if: ${{ matrix.reference != 'null' }}
-      #   # run: conan user -p ${{ secrets.CONAN_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
-      #   run: conan remote login -p ${{ secrets.CONAN_PASSWORD }} $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
-      # - name: download
-      #   if: ${{ matrix.reference != 'null' }}
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: conan-lockfile
-      # - name: build
-      #   if: ${{ matrix.reference != 'null' }}
-      #   run: conan install --requires=${{ matrix.reference }} -l conan.lock -b missing
-      # - name: upload
-      #   if: ${{ matrix.reference != 'null' }}
-      #   run: conan upload ${{ matrix.reference }} -r $CONAN_REMOTE # --all
-      # - run: exit 0
+  #   # if: ${{ matrix.config.compiler == 'GCC' }}
+  #   # container:
+  #   #   image: ${{ needs.build-base-docker-image.outputs.name }}
+  #   #   credentials:
+  #   #     username: ${{ github.repository_owner }}
+  #   #     password: ${{ github.token }}
+
+  #   container:
+  #     image: "hub.docker.com/r/conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
+  #       # echo "CONAN_DOCKER_IMAGE=conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}" >> $GITHUB_ENV
+
+  #   steps:
+  #     - name: Print OS
+  #       run: |
+  #         echo "Matrix 1:   ${{ matrix }}"
+  #         echo "Matrix 2:   ${{ needs.calc-deps.outputs.matrix }}"
+  #         echo "Matrix 3:   ${{ fromJson(needs.calc-deps.outputs.matrix) }}"
+  #         echo "Include     ${{ matrix.config }}"
+  #         echo "OS:         ${{ matrix.config.os }}"
+  #         echo "Name:       ${{ matrix.config.name }}"
+
+  #     # - uses: actions/checkout@v3
+  #     # - if: ${{ matrix.reference != 'null' }}
+  #     #   uses: ./.github/actions/setup-conan
+  #     # - if: ${{ matrix.reference != 'null' }}
+  #     #   uses: ./.github/actions/setup-kthbuild
+  #     # - if: ${{ matrix.reference != 'null' }}
+  #     #   # run: conan user -p ${{ secrets.CONAN_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
+  #     #   run: conan remote login -p ${{ secrets.CONAN_PASSWORD }} $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
+  #     # - name: download
+  #     #   if: ${{ matrix.reference != 'null' }}
+  #     #   uses: actions/download-artifact@v3
+  #     #   with:
+  #     #     name: conan-lockfile
+  #     # - name: build
+  #     #   if: ${{ matrix.reference != 'null' }}
+  #     #   run: conan install --requires=${{ matrix.reference }} -l conan.lock -b missing
+  #     # - name: upload
+  #     #   if: ${{ matrix.reference != 'null' }}
+  #     #   run: conan upload ${{ matrix.reference }} -r $CONAN_REMOTE # --all
+  #     # - run: exit 0
 
   # build-deps:
   #   needs: [build-base-docker-image, calc-deps]

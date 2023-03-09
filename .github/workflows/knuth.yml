@@ -209,14 +209,14 @@ jobs:
     needs: [build-base-docker-image, calc-deps]
     strategy:
       matrix: ${{ fromJson(needs.calc-deps.outputs.matrix) }}
-    name: ${{ matrix.include.name }}
+    name: ${{ matrix.config.name }}
 
-    # if: ${{ matrix.include.compiler == 'GCC' }}
+    # if: ${{ matrix.config.compiler == 'GCC' }}
     runs-on: ubuntu-latest
-    # if: ${{ matrix.include.compiler != 'GCC' }}
-    # runs-on: ${{ matrix.include.os }}
+    # if: ${{ matrix.config.compiler != 'GCC' }}
+    # runs-on: ${{ matrix.config.os }}
 
-    # if: ${{ matrix.include.compiler == 'GCC' }}
+    # if: ${{ matrix.config.compiler == 'GCC' }}
     # container:
     #   image: ${{ needs.build-base-docker-image.outputs.name }}
     #   credentials:
@@ -234,9 +234,9 @@ jobs:
           echo "Matrix 1:   ${{ matrix }}"
           echo "Matrix 2:   ${{ needs.calc-deps.outputs.matrix }}"
           echo "Matrix 3:   ${{ fromJson(needs.calc-deps.outputs.matrix) }}"
-          echo "Include     ${{ matrix.include }}"
-          echo "OS:         ${{ matrix.include.os }}"
-          echo "Name:       ${{ matrix.include.name }}"
+          echo "Include     ${{ matrix.config }}"
+          echo "OS:         ${{ matrix.config.os }}"
+          echo "Name:       ${{ matrix.config.name }}"
 
       # - uses: actions/checkout@v3
       # - if: ${{ matrix.reference != 'null' }}

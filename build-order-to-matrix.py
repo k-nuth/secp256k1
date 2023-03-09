@@ -1,7 +1,7 @@
 import json
 
 def main():
-    matrix = {"include": []}
+    matrix = {"config": []}
 
     with open("platform.json", "r") as platform_file:
         platform_data = json.load(platform_file)
@@ -13,11 +13,11 @@ def main():
                     for platform in platform_data['config']:
                         platform["name"] = f'{platform["name"]} - {reference["ref"]}'
                         platform["reference"] = reference["ref"]
-                        matrix["include"].append(platform)
+                        matrix["config"].append(platform)
 
 
-            if len(matrix["include"]) == 0:
-                matrix["include"].append({"reference": "null"})
+            if len(matrix["config"]) == 0:
+                matrix["config"].append({"reference": "null"})
 
     # print(matrix)
     with open("matrix.json", "w") as write_file:

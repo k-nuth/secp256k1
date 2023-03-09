@@ -212,9 +212,9 @@ jobs:
     name: ${{ matrix.config.name }}
 
     # if: ${{ matrix.config.compiler == 'GCC' }}
-    runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
     # if: ${{ matrix.config.compiler != 'GCC' }}
-    # runs-on: ${{ matrix.config.os }}
+    runs-on: ${{ matrix.config.os }}
 
     # if: ${{ matrix.config.compiler == 'GCC' }}
     # container:
@@ -224,9 +224,10 @@ jobs:
     #     password: ${{ github.token }}
 
 
-    # container:
-    #   image: "hub.docker.com/r/conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
-    #     # echo "CONAN_DOCKER_IMAGE=conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}" >> $GITHUB_ENV
+    if: ${{ matrix.config.compiler == 'GCC' }}
+    container:
+      image: "hub.docker.com/r/conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
+        # echo "CONAN_DOCKER_IMAGE=conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}" >> $GITHUB_ENV
 
     steps:
       - name: Print OS

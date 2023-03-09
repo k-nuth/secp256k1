@@ -193,8 +193,8 @@ jobs:
     with:
       if: ${{ matrix.config.compiler == 'GCC' }}
       os: ${{ matrix.config.os }}
-      xxx: "something"
       image: "conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
+      reference: ${{ matrix.config.reference }}
 
 
 # https://hub.docker.com/r/conanio/gcc11/

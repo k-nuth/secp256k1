@@ -11,7 +11,7 @@ on:
       image:
         required: true
         type: string
-      other:
+      xxx:
         required: true
         type: string
 jobs:
@@ -25,7 +25,7 @@ jobs:
     steps:
       - name: Print Other
         run: |
-          echo "Other     ${{ input.other }}"
+          echo "Other     ${{ input.xxx }}"
 
       # - uses: actions/checkout@v3
       # - if: ${{ matrix.reference != 'null' }}

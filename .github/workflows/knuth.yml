@@ -214,7 +214,7 @@ jobs:
           name: conan-lockfile
       - name: build
         if: ${{ matrix.reference != 'null' }}
-        run: conan install ${{ matrix.reference }} -l conan.lock -b missing
+        run: conan install --requires=${{ matrix.reference }} -l conan.lock -b missing
       - name: upload
         if: ${{ matrix.reference != 'null' }}
         run: conan upload ${{ matrix.reference }} -r $CONAN_REMOTE --all

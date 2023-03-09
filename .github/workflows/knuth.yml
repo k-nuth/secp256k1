@@ -192,14 +192,14 @@ jobs:
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
 
-    # container:
-    #   image: ${{ needs.build-base-docker-image.outputs.name }}
-    #   credentials:
-    #     username: ${{ github.repository_owner }}
-    #     password: ${{ github.token }}
-
     container:
-      image: "conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
+      image: ${{ needs.build-base-docker-image.outputs.name }}
+      credentials:
+        username: ${{ github.repository_owner }}
+        password: ${{ github.token }}
+
+    # container:
+    #   image: "conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
 
     steps:
       - uses: actions/checkout@v3

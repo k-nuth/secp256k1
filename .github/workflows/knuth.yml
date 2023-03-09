@@ -128,7 +128,6 @@ jobs:
         with:
           registry: docker.pkg.github.com
           username: ${{ github.repository_owner }}
-          # password: ${{ secrets.GIT_DOCKER_PAT }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - id: check
         name: check existence
@@ -148,7 +147,6 @@ jobs:
       credentials:
         username: ${{ github.repository_owner }}
         password: ${{ github.token }}
-        # password: ${{ secrets.GIT_DOCKER_PAT }}
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
@@ -186,15 +184,22 @@ jobs:
           echo "${MATRIX}"
           echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
 
+# https://hub.docker.com/r/conanio/gcc11/
+
   build-deps:
     needs: [build-base-docker-image, calc-deps]
-    runs-on: ubuntu-latest
-    container:
-      image: ${{ needs.build-base-docker-image.outputs.name }}
-      credentials:
-        username: ${{ github.repository_owner }}
-        password: ${{ github.token }}
-        # password: ${{ secrets.GIT_DOCKER_PAT }}
+
+    if: ${{ matrix.config.compiler == 'GCC' }}
+      runs-on: ubuntu-latest
+    if: ${{ matrix.config.compiler != 'GCC' }}
+      runs-on: ${{ matrix.include.os }}
+
+    if: ${{ matrix.config.compiler == 'GCC' }}
+      container:
+        image: ${{ needs.build-base-docker-image.outputs.name }}
+        credentials:
+          username: ${{ github.repository_owner }}
+          password: ${{ github.token }}
     strategy:
       matrix: ${{ fromJson(needs.calc-deps.outputs.matrix) }}
     name: ${{ matrix.include.name }}
@@ -217,8 +222,41 @@ jobs:
         run: conan install --requires=${{ matrix.reference }} -l conan.lock -b missing
       - name: upload
         if: ${{ matrix.reference != 'null' }}
-        run: conan upload ${{ matrix.reference }} -r $CONAN_REMOTE --all
+        run: conan upload ${{ matrix.reference }} -r $CONAN_REMOTE # --all
       - run: exit 0
+
+  # build-deps:
+  #   needs: [build-base-docker-image, calc-deps]
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: ${{ needs.build-base-docker-image.outputs.name }}
+  #     credentials:
+  #       username: ${{ github.repository_owner }}
+  #       password: ${{ github.token }}
+  #   strategy:
+  #     matrix: ${{ fromJson(needs.calc-deps.outputs.matrix) }}
+  #   name: ${{ matrix.include.name }}
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - if: ${{ matrix.reference != 'null' }}
+  #       uses: ./.github/actions/setup-conan
+  #     - if: ${{ matrix.reference != 'null' }}
+  #       uses: ./.github/actions/setup-kthbuild
+  #     - if: ${{ matrix.reference != 'null' }}
+  #       # run: conan user -p ${{ secrets.CONAN_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
+  #       run: conan remote login -p ${{ secrets.CONAN_PASSWORD }} $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
+  #     - name: download
+  #       if: ${{ matrix.reference != 'null' }}
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: conan-lockfile
+  #     - name: build
+  #       if: ${{ matrix.reference != 'null' }}
+  #       run: conan install --requires=${{ matrix.reference }} -l conan.lock -b missing
+  #     - name: upload
+  #       if: ${{ matrix.reference != 'null' }}
+  #       run: conan upload ${{ matrix.reference }} -r $CONAN_REMOTE # --all
+  #     - run: exit 0
 
   generate-matrix:
     name: Generate Job Matrix

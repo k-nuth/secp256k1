@@ -212,7 +212,6 @@ jobs:
     steps:
       - name: Print OS
         run: |
-          MATRIX=$(cat ./ci_utils/.github/matrix.json)
           echo "OS:   ${{ matrix.include.os }}"
           echo "Name: ${{ matrix.include.name }}"
 

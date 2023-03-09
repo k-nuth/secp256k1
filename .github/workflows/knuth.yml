@@ -188,22 +188,29 @@ jobs:
 
   build-deps:
     needs: [build-base-docker-image, calc-deps]
+    strategy:
+      matrix: ${{ fromJson(needs.calc-deps.outputs.matrix) }}
+    name: ${{ matrix.include.name }}
 
-    if: ${{ matrix.config.compiler == 'GCC' }}
+    if: ${{ matrix.include.compiler == 'GCC' }}
       runs-on: ubuntu-latest
-    if: ${{ matrix.config.compiler != 'GCC' }}
+    if: ${{ matrix.include.compiler != 'GCC' }}
       runs-on: ${{ matrix.include.os }}
 
-    if: ${{ matrix.config.compiler == 'GCC' }}
+    if: ${{ matrix.include.compiler == 'GCC' }}
       container:
         image: ${{ needs.build-base-docker-image.outputs.name }}
         credentials:
           username: ${{ github.repository_owner }}
           password: ${{ github.token }}
-    strategy:
-      matrix: ${{ fromJson(needs.calc-deps.outputs.matrix) }}
-    name: ${{ matrix.include.name }}
     steps:
+
+      - name: Print OS
+        run: |
+          MATRIX=$(cat ./ci_utils/.github/matrix.json)
+          echo "OS:   ${{ matrix.include.os }}"
+          echo "Name: ${{ matrix.include.name }}"
+
       - uses: actions/checkout@v3
       - if: ${{ matrix.reference != 'null' }}
         uses: ./.github/actions/setup-conan

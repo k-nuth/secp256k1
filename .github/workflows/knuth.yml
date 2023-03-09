@@ -193,9 +193,9 @@ jobs:
     name: ${{ matrix.include.name }}
 
     # if: ${{ matrix.include.compiler == 'GCC' }}
-    # runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
     # if: ${{ matrix.include.compiler != 'GCC' }}
-    runs-on: ${{ matrix.include.os }}
+    # runs-on: ${{ matrix.include.os }}
 
     # if: ${{ matrix.include.compiler == 'GCC' }}
     # container:
@@ -205,9 +205,9 @@ jobs:
     #     password: ${{ github.token }}
 
 
-    container:
-      image: "hub.docker.com/r/conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
-        # echo "CONAN_DOCKER_IMAGE=conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}" >> $GITHUB_ENV
+    # container:
+    #   image: "hub.docker.com/r/conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
+    #     # echo "CONAN_DOCKER_IMAGE=conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}" >> $GITHUB_ENV
 
     steps:
       - name: Print OS
@@ -216,26 +216,26 @@ jobs:
           echo "OS:   ${{ matrix.include.os }}"
           echo "Name: ${{ matrix.include.name }}"
 
-      - uses: actions/checkout@v3
-      - if: ${{ matrix.reference != 'null' }}
-        uses: ./.github/actions/setup-conan
-      - if: ${{ matrix.reference != 'null' }}
-        uses: ./.github/actions/setup-kthbuild
-      - if: ${{ matrix.reference != 'null' }}
-        # run: conan user -p ${{ secrets.CONAN_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
-        run: conan remote login -p ${{ secrets.CONAN_PASSWORD }} $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
-      - name: download
-        if: ${{ matrix.reference != 'null' }}
-        uses: actions/download-artifact@v3
-        with:
-          name: conan-lockfile
-      - name: build
-        if: ${{ matrix.reference != 'null' }}
-        run: conan install --requires=${{ matrix.reference }} -l conan.lock -b missing
-      - name: upload
-        if: ${{ matrix.reference != 'null' }}
-        run: conan upload ${{ matrix.reference }} -r $CONAN_REMOTE # --all
-      - run: exit 0
+      # - uses: actions/checkout@v3
+      # - if: ${{ matrix.reference != 'null' }}
+      #   uses: ./.github/actions/setup-conan
+      # - if: ${{ matrix.reference != 'null' }}
+      #   uses: ./.github/actions/setup-kthbuild
+      # - if: ${{ matrix.reference != 'null' }}
+      #   # run: conan user -p ${{ secrets.CONAN_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
+      #   run: conan remote login -p ${{ secrets.CONAN_PASSWORD }} $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
+      # - name: download
+      #   if: ${{ matrix.reference != 'null' }}
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: conan-lockfile
+      # - name: build
+      #   if: ${{ matrix.reference != 'null' }}
+      #   run: conan install --requires=${{ matrix.reference }} -l conan.lock -b missing
+      # - name: upload
+      #   if: ${{ matrix.reference != 'null' }}
+      #   run: conan upload ${{ matrix.reference }} -r $CONAN_REMOTE # --all
+      # - run: exit 0
 
   # build-deps:
   #   needs: [build-base-docker-image, calc-deps]
@@ -288,9 +288,11 @@ jobs:
         run: |
           MATRIX=$(cat ./ci_utils/.github/matrix.json)
           echo "${MATRIX}"
-          echo "::set-output name=matrix::${MATRIX}"
-          # JSON=$(cat ./ci_utils/.github/matrix.json)
-          # echo "::set-output name=${JSON//'%'/'%25'}"
+          echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
+
+          # echo "::set-output name=matrix::${MATRIX}"
+          # # JSON=$(cat ./ci_utils/.github/matrix.json)
+          # # echo "::set-output name=${JSON//'%'/'%25'}"
 
   builds:
     needs: [build-deps, generate-matrix]

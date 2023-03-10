@@ -24,7 +24,8 @@ jobs:
     if: ${{ inputs.if }}
     runs-on: ${{ inputs.os }}
     steps:
-      - run: |
+      - if: ${{ inputs.reference != 'null' }}
+        run: |
           echo "inputs.conan-remote: ${{ inputs.conan-remote }}"
           echo "CONAN_REMOTE: $CONAN_REMOTE"
           echo "inputs.if: ${{ inputs.if }}"
@@ -32,14 +33,17 @@ jobs:
           echo "inputs.reference: ${{ inputs.reference }}"
           python -c 'import platform; print(platform.machine())'
           uname -m
+          python --version
           pip install cpuid --upgrade --user
+          pip install kthbuild --upgrade --user
+          # python3 -m pip install kthbuild --upgrade
 
 
       - uses: actions/checkout@v3
       - if: ${{ inputs.reference != 'null' }}
         uses: ./.github/actions/setup-conan
-      - if: ${{ inputs.reference != 'null' }}
-        uses: ./.github/actions/setup-kthbuild
+      # - if: ${{ inputs.reference != 'null' }}
+      #   uses: ./.github/actions/setup-kthbuild
       - if: ${{ inputs.reference != 'null' }}
         run: conan remote login -p ${{ secrets.conan-password }} ${{ inputs.conan-remote }} ${{ secrets.conan-user }}
       - name: download

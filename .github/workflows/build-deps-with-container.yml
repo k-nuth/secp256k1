@@ -29,6 +29,9 @@ jobs:
     container:
       image: ${{ inputs.image }}
     steps:
+      - run: |
+          echo "inputs.conan-remote: ${{ inputs.conan-remote }}"
+          echo "CONAN_REMOTE: $CONAN_REMOTE"
       - uses: actions/checkout@v3
       - if: ${{ inputs.reference != 'null' }}
         uses: ./.github/actions/setup-conan

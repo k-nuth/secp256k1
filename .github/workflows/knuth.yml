@@ -229,6 +229,9 @@ jobs:
 
   build-deps-with-container:
     needs: [build-base-docker-image, calc-deps]
+    env:
+      conan-remote: ${{ CONAN_REMOTE }}
+      conan-remote2: $CONAN_REMOTE
     strategy:
       matrix: ${{ fromJson(needs.calc-deps.outputs.matrix) }}
     name: ${{ matrix.config.name }}
@@ -239,7 +242,7 @@ jobs:
       # image: "conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
       image: "kthnode/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
       reference: ${{ matrix.config.reference }}
-      conan-remote: $CONAN_REMOTE
+      conan-remote: ${{ env.conan-remote }}
     secrets:
       conan-user: ${{ secrets.CONAN_LOGIN_USERNAME }}
       conan-password: ${{ secrets.CONAN_PASSWORD }}

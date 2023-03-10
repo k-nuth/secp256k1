@@ -96,16 +96,13 @@ jobs:
 
 
 
-      # - uses: actions/setup-python@v4
-      #   with:
-      #     python-version: "3.11"
       - uses: ./.github/actions/setup-conan
       - uses: ./.github/actions/setup-kthbuild
       - uses: lukka/get-cmake@latest
 
-      - uses: github/codeql-action/init@v2
-        with:
-          languages: 'cpp'
+      # - uses: github/codeql-action/init@v2
+      #   with:
+      #     languages: 'cpp'
 
       - uses: ./.github/actions/replace-version
         with:
@@ -122,7 +119,7 @@ jobs:
           conan lock create conanfile.py --version ${{ inputs.build-version }} --lockfile=conan.lock --lockfile-out=build/conan.lock
           conan create conanfile.py ${{ inputs.build-version }}@ --lockfile=build/conan.lock
 
-      - uses: github/codeql-action/analyze@v2
+      # - uses: github/codeql-action/analyze@v2
 
       - name: upload
         if: github.event_name == 'push' && needs.check.outputs.permitted == 'true'

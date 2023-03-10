@@ -32,6 +32,12 @@ jobs:
       - run: |
           echo "inputs.conan-remote: ${{ inputs.conan-remote }}"
           echo "CONAN_REMOTE: $CONAN_REMOTE"
+          echo "inputs.if: ${{ inputs.if }}"
+          echo "inputs.os: ${{ inputs.os }}"
+          echo "inputs.image: ${{ inputs.image }}"
+          echo "inputs.reference: ${{ inputs.reference }}"
+
+
       # - uses: actions/checkout@v3
       # - if: ${{ inputs.reference != 'null' }}
       #   uses: ./.github/actions/setup-conan

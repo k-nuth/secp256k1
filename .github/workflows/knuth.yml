@@ -23,81 +23,19 @@ env:
 jobs:
   print-envs:
     runs-on: ubuntu-20.04
-    # container:
-    #   image: ${{ inputs.image }}
     steps:
       - run: |
           echo "env.CONAN_REMOTE: ${{ env.CONAN_REMOTE }}"
           echo "CONAN_REMOTE:     $CONAN_REMOTE"
 
-
-  # master:
-  #   name: Master and Dev
-  #   if: github.ref == 'refs/heads/master' ||
-  #       github.ref == 'refs/heads/dev'
-  #   runs-on: ubuntu-20.04
-  #   steps:
-  #     - name: Master Build
-  #       shell: bash
-  #       run: |
-  #         echo "Stable packages are published in Release branches"
-
-  # wait-for-dependencies:
-  #   name: Wait for dependencies (modules)
-  #   if: github.ref == 'refs/heads/devX' ||
-  #       startsWith(github.ref, 'refs/heads/testci') ||
-  #       startsWith(github.ref, 'refs/heads/release') ||
-  #       startsWith(github.ref, 'refs/heads/hotfix')
-
-  #   runs-on: ubuntu-20.04
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #       if: startsWith(github.ref, 'refs/heads/testci') ||
-  #           startsWith(github.ref, 'refs/heads/release') ||
-  #           startsWith(github.ref, 'refs/heads/hotfix')
-
-  #       with:
-  #         submodules: true
-  #     - uses: actions/setup-python@v4
-  #       if: startsWith(github.ref, 'refs/heads/testci') ||
-  #           startsWith(github.ref, 'refs/heads/release') ||
-  #           startsWith(github.ref, 'refs/heads/hotfix')
-  #       with:
-  #         python-version: "3.10"
-
-  #     - name: Install software
-  #       if: startsWith(github.ref, 'refs/heads/testci') ||
-  #           startsWith(github.ref, 'refs/heads/release') ||
-  #           startsWith(github.ref, 'refs/heads/hotfix')
-  #       run: |
-  #         chmod +x ci_utils/.ci-cd/install.sh
-  #         ./ci_utils/.ci-cd/install.sh
-  #       shell: bash
-
-  #     - name: Wait for dependencies (modules)
-  #       if: startsWith(github.ref, 'refs/heads/testci') ||
-  #           startsWith(github.ref, 'refs/heads/release') ||
-  #           startsWith(github.ref, 'refs/heads/hotfix')
-  #       env:
-  #         CONAN_GCC_VERSIONS: 10
-  #         CONAN_DOCKER_IMAGE: conanio/gcc10
-
-  #       shell: bash
-  #       run: |
-  #         conan user
-  #         conan remote list
-  #         conan remote add kthbuild_kth_temp_ https://knuth.jfrog.io/artifactory/api/conan/knuth || true
-  #         conan remote list
-  #         # echo "KTH_REPO_NAME=$(echo '${{ github.repository }}' | awk -F '/' '{print $1}')" >> $GITHUB_ENV
-  #         export KTH_REPO_NAME=$(echo '${{ github.repository }}')
-  #         echo "My repo name is $KTH_REPO_NAME"
-  #         python ci_utils/wait_for_deps.py
-
-  #     - name: Dummy Step for dev branch
-  #       if: github.ref == 'refs/heads/devX'
-  #       shell: bash
-  #       run: |
-  #         echo "Nothing to do!"
+  print-envs-container:
+    runs-on: ubuntu-20.04
+    container:
+      image: docker.pkg.github.com/k-nuth/kth/alpine-image
+    steps:
+      - run: |
+          echo "env.CONAN_REMOTE: ${{ env.CONAN_REMOTE }}"
+          echo "CONAN_REMOTE:     $CONAN_REMOTE"
 
   check:
     runs-on: ubuntu-latest
@@ -252,7 +190,8 @@ jobs:
       image: "kthnode/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
       reference: ${{ matrix.config.reference }}
       # conan-remote: ${{ env.conan-remote }}
-      conan-remote: $CONAN_REMOTE
+      # conan-remote: $CONAN_REMOTE
+      conan-remote: ${{ env.CONAN_REMOTE }}
     secrets:
       conan-user: ${{ secrets.CONAN_LOGIN_USERNAME }}
       conan-password: ${{ secrets.CONAN_PASSWORD }}
@@ -583,3 +522,113 @@ jobs:
   #         conan upload "${REPO_NAME}/0.X@kth/${KTH_CONAN_CHANNEL}" --all -r kthbuild_kth_temp_
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  # master:
+  #   name: Master and Dev
+  #   if: github.ref == 'refs/heads/master' ||
+  #       github.ref == 'refs/heads/dev'
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #     - name: Master Build
+  #       shell: bash
+  #       run: |
+  #         echo "Stable packages are published in Release branches"
+
+  # wait-for-dependencies:
+  #   name: Wait for dependencies (modules)
+  #   if: github.ref == 'refs/heads/devX' ||
+  #       startsWith(github.ref, 'refs/heads/testci') ||
+  #       startsWith(github.ref, 'refs/heads/release') ||
+  #       startsWith(github.ref, 'refs/heads/hotfix')
+
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       if: startsWith(github.ref, 'refs/heads/testci') ||
+  #           startsWith(github.ref, 'refs/heads/release') ||
+  #           startsWith(github.ref, 'refs/heads/hotfix')
+
+  #       with:
+  #         submodules: true
+  #     - uses: actions/setup-python@v4
+  #       if: startsWith(github.ref, 'refs/heads/testci') ||
+  #           startsWith(github.ref, 'refs/heads/release') ||
+  #           startsWith(github.ref, 'refs/heads/hotfix')
+  #       with:
+  #         python-version: "3.10"
+
+  #     - name: Install software
+  #       if: startsWith(github.ref, 'refs/heads/testci') ||
+  #           startsWith(github.ref, 'refs/heads/release') ||
+  #           startsWith(github.ref, 'refs/heads/hotfix')
+  #       run: |
+  #         chmod +x ci_utils/.ci-cd/install.sh
+  #         ./ci_utils/.ci-cd/install.sh
+  #       shell: bash
+
+  #     - name: Wait for dependencies (modules)
+  #       if: startsWith(github.ref, 'refs/heads/testci') ||
+  #           startsWith(github.ref, 'refs/heads/release') ||
+  #           startsWith(github.ref, 'refs/heads/hotfix')
+  #       env:
+  #         CONAN_GCC_VERSIONS: 10
+  #         CONAN_DOCKER_IMAGE: conanio/gcc10
+
+  #       shell: bash
+  #       run: |
+  #         conan user
+  #         conan remote list
+  #         conan remote add kthbuild_kth_temp_ https://knuth.jfrog.io/artifactory/api/conan/knuth || true
+  #         conan remote list
+  #         # echo "KTH_REPO_NAME=$(echo '${{ github.repository }}' | awk -F '/' '{print $1}')" >> $GITHUB_ENV
+  #         export KTH_REPO_NAME=$(echo '${{ github.repository }}')
+  #         echo "My repo name is $KTH_REPO_NAME"
+  #         python ci_utils/wait_for_deps.py
+
+  #     - name: Dummy Step for dev branch
+  #       if: github.ref == 'refs/heads/devX'
+  #       shell: bash
+  #       run: |
+  #         echo "Nothing to do!"

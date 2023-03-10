@@ -32,10 +32,11 @@ jobs:
           echo "inputs.os: ${{ inputs.os }}"
           echo "inputs.reference: ${{ inputs.reference }}"
           python -c 'import platform; print(platform.machine())'
+          python3 -c 'import platform; print(platform.machine())'
           uname -m
-          python --version
-          pip install cpuid --upgrade --user
-          pip install kthbuild --upgrade --user
+          python3 --version
+          pip3 install cpuid --upgrade --user
+          pip3 install kthbuild --upgrade --user
           # python3 -m pip install kthbuild --upgrade
 
 

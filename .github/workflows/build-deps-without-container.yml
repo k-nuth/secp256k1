@@ -31,8 +31,14 @@ jobs:
           echo "inputs.if: ${{ inputs.if }}"
           echo "inputs.os: ${{ inputs.os }}"
           echo "inputs.reference: ${{ inputs.reference }}"
+
           python -c 'import platform; print(platform.machine())'
           python3 -c 'import platform; print(platform.machine())'
+
+          python -c 'import sysconfig; print(sysconfig.get_platform())'
+          python3 -c 'import sysconfig; print(sysconfig.get_platform())'
+
+
           uname -m
           python3 --version
           pip3 install cpuid --upgrade --user

@@ -230,8 +230,7 @@ jobs:
   build-deps-with-container:
     needs: [build-base-docker-image, calc-deps]
     env:
-      conan-remote: ${{ CONAN_REMOTE }}
-      conan-remote2: $CONAN_REMOTE
+      conan-remote: $CONAN_REMOTE
     strategy:
       matrix: ${{ fromJson(needs.calc-deps.outputs.matrix) }}
     name: ${{ matrix.config.name }}

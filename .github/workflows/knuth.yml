@@ -191,7 +191,7 @@ jobs:
       reference: ${{ matrix.config.reference }}
       # conan-remote: ${{ env.conan-remote }}
       # conan-remote: $CONAN_REMOTE
-      conan-remote: ${{ env.CONAN_REMOTE }}
+      conan-remote: "${{ env.CONAN_REMOTE }}"
     secrets:
       conan-user: ${{ secrets.CONAN_LOGIN_USERNAME }}
       conan-password: ${{ secrets.CONAN_PASSWORD }}

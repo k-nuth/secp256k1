@@ -171,150 +171,178 @@ jobs:
           # # JSON=$(cat ./ci_utils/.github/matrix.json)
           # # echo "::set-output name=${JSON//'%'/'%25'}"
 
-  builds:
+  build-with-container:
     needs: [build-deps-with-container, generate-matrix]
-    runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
       matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
     name: ${{ matrix.config.name }}
-    steps:
-      - name: Set git to use LF (Windows)
-        if: ${{ matrix.config.compiler == 'Visual Studio' }}
-        run: |
-          git config --global core.autocrlf false
-          git config --global core.eol lf
-          # git config --global --edit
-          # git config --global core.autocrlf true
-          # git config --global --edit
+    uses: ./.github/workflows/build-with-container.yml
+    with:
+      if: ${{ matrix.config.compiler == 'GCC' }}
+      os: ${{ matrix.config.os }}
+      image: "kthnode/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
+      conan-remote: "kth"
+      recipe-name: "secp256k1"
+      compiler: ${{ matrix.config.compiler }}
+      compiler-version: ${{ matrix.config.version }}
+      version-file: "include/secp256k1/version.h"
+      build-version: "0.16.0-commit.${{ github.run_number }}"
+    secrets:
+      CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_USERNAME }}
+      CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
 
-      - uses: actions/checkout@v3
-        with:
-          submodules: true
 
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
 
-      - uses: ./.github/actions/setup-conan
-      - uses: ./.github/actions/setup-kthbuild
-      - uses: lukka/get-cmake@latest
 
-      # - name: Install Dependencies (Unix)
-      #   if: ${{ matrix.config.compiler != 'Visual Studio' }}
-      #   run: |
-      #     chmod +x ci_utils/.ci-cd/install.sh
-      #     ./ci_utils/.ci-cd/install.sh
-      #   shell: bash
 
-      # - name: Install Dependencies (Windows)
-      #   if: ${{ matrix.config.compiler == 'Visual Studio' }}
-      #   run: |
-      #     set PATH=%PYTHON%;%PYTHON%/Scripts/;%PATH%;
-      #     python.exe --version
-      #     cmake --version
-      #     python.exe -m pip install --upgrade pip
-      #     pip.exe install conan_package_tools==0.39.0
-      #     pip.exe install kthbuild --upgrade
-      #     pip.exe install conan==1.51.2
-      #     conan user
-      #   shell: cmd
 
-      - name: Settting EnvVars (Linux)
-        if: ${{ matrix.config.compiler == 'GCC' }}
-        shell: bash
-        run: |
-          echo "CONAN_GCC_VERSIONS=${{ matrix.config.version }}" >> $GITHUB_ENV
-          echo "CONAN_DOCKER_IMAGE=conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}" >> $GITHUB_ENV
 
-      - name: Settting EnvVars (macOS)
-        if: ${{ matrix.config.compiler == 'apple-clang' }}
-        shell: bash
-        run: |
-          echo "CONAN_APPLE_CLANG_VERSIONS=${{ matrix.config.version }}.0" >> $GITHUB_ENV
 
-      - name: Settting EnvVars (Windows)
-        if: ${{ matrix.config.compiler == 'Visual Studio' }}
-        # shell: bash
-        shell: powershell
-        run: |
-          echo "CONAN_VISUAL_VERSIONS=${{ matrix.config.version }}" >> $Env:GITHUB_ENV
-          echo "CONAN_VISUAL_RUNTIMES=${{ matrix.config.msvc_runtime }}" >> $Env:GITHUB_ENV
-          # echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $env:GITHUB_ENV
+  # builds:
+  #   needs: [build-deps-with-container, generate-matrix]
+  #   runs-on: ${{ matrix.config.os }}
+  #   strategy:
+  #     fail-fast: false
+  #     matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
+  #   name: ${{ matrix.config.name }}
+  #   steps:
+  #     - name: Set git to use LF (Windows)
+  #       if: ${{ matrix.config.compiler == 'Visual Studio' }}
+  #       run: |
+  #         git config --global core.autocrlf false
+  #         git config --global core.eol lf
+  #         # git config --global --edit
+  #         # git config --global core.autocrlf true
+  #         # git config --global --edit
 
-      - name: Build (Unix)
-        if: ${{ matrix.config.compiler != 'Visual Studio' }}
-        env:
-          CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_USERNAME }}
-          CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
-          CONAN_LOGIN_USERNAME_UPLOAD_REPO: ${{ secrets.CONAN_LOGIN_USERNAME_UPLOAD_REPO }}
-          CONAN_PASSWORD_UPLOAD_REPO: ${{ secrets.CONAN_PASSWORD_UPLOAD_REPO }}
-          CONAN_STABLE_BRANCH_PATTERN: "master$" #"release/*"
-          CONAN_DISABLE_STRICT_MODE: 1          # Remove after implementing Conan v2
-          # CONAN_BUILD_POLICY: "missing"
-        shell: bash
-        run: |
-          echo ${{ matrix.config.compiler }}
-          echo ${BPT_MATRIX}
-          echo ${CONAN_STABLE_BRANCH_PATTERN}
-          echo ${CONAN_GCC_VERSIONS}
-          echo ${CONAN_APPLE_CLANG_VERSIONS}
-          echo ${CONAN_DOCKER_IMAGE}
-          echo ${CONAN_LOGIN_USERNAME}
-          echo ${CONAN_LOGIN_USERNAME_UPLOAD_REPO}
-          echo ${CONAN_LOGIN_USERNAME}
-          echo ${CONAN_DOCKER_ENTRY_SCRIPT}
-          echo ${CONAN_DISABLE_STRICT_MODE}
-          # echo ${CONAN_BUILD_POLICY}
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         submodules: true
 
-          export KTH_BRANCH=$(echo '${{ github.ref }}' | awk -F '/' '{print $3}')
-          echo "My branch name is $KTH_BRANCH"
+  #     - uses: actions/setup-python@v4
+  #       with:
+  #         python-version: "3.10"
 
-          chmod +x ci_utils/.ci-cd/run.sh
-          ./ci_utils/.ci-cd/run.sh
+  #     - uses: ./.github/actions/setup-conan
+  #     - uses: ./.github/actions/setup-kthbuild
+  #     - uses: lukka/get-cmake@latest
 
-      - name: Build (Windows)
-        if: ${{ matrix.config.compiler == 'Visual Studio' }}
-        env:
-          CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_USERNAME }}
-          CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
-          CONAN_LOGIN_USERNAME_UPLOAD_REPO: ${{ secrets.CONAN_LOGIN_USERNAME_UPLOAD_REPO }}
-          CONAN_PASSWORD_UPLOAD_REPO: ${{ secrets.CONAN_PASSWORD_UPLOAD_REPO }}
-          CONAN_STABLE_BRANCH_PATTERN: "master$" #"release/*"
-          CONAN_DISABLE_STRICT_MODE: 1          # Remove after implementing Conan v2
-          # CONAN_BUILD_POLICY: "missing"
+  #     # - name: Install Dependencies (Unix)
+  #     #   if: ${{ matrix.config.compiler != 'Visual Studio' }}
+  #     #   run: |
+  #     #     chmod +x ci_utils/.ci-cd/install.sh
+  #     #     ./ci_utils/.ci-cd/install.sh
+  #     #   shell: bash
 
-        shell: powershell
-        run: |
-          # echo ${{ matrix.config.compiler }}
-          # echo %BPT_MATRIX%
-          # echo %CONAN_STABLE_BRANCH_PATTERN%
-          # echo %CONAN_LOGIN_USERNAME%
+  #     # - name: Install Dependencies (Windows)
+  #     #   if: ${{ matrix.config.compiler == 'Visual Studio' }}
+  #     #   run: |
+  #     #     set PATH=%PYTHON%;%PYTHON%/Scripts/;%PATH%;
+  #     #     python.exe --version
+  #     #     cmake --version
+  #     #     python.exe -m pip install --upgrade pip
+  #     #     pip.exe install conan_package_tools==0.39.0
+  #     #     pip.exe install kthbuild --upgrade
+  #     #     pip.exe install conan==1.51.2
+  #     #     conan user
+  #     #   shell: cmd
 
-          Write-Host "CONAN_VISUAL_VERSIONS: $Env:CONAN_VISUAL_VERSIONS"
-          Write-Host "CONAN_VISUAL_RUNTIMES: $Env:CONAN_VISUAL_RUNTIMES"
-          # Write-Host "CONAN_BUILD_POLICY: $Env:CONAN_BUILD_POLICY"
+  #     - name: Settting EnvVars (Linux)
+  #       if: ${{ matrix.config.compiler == 'GCC' }}
+  #       shell: bash
+  #       run: |
+  #         echo "CONAN_GCC_VERSIONS=${{ matrix.config.version }}" >> $GITHUB_ENV
+  #         echo "CONAN_DOCKER_IMAGE=conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}" >> $GITHUB_ENV
 
-          $Env:KTH_BRANCH = "${{ github.ref }}".Split("/")[2]
-          Write-Host "My branch name is $Env:KTH_BRANCH"
+  #     - name: Settting EnvVars (macOS)
+  #       if: ${{ matrix.config.compiler == 'apple-clang' }}
+  #       shell: bash
+  #       run: |
+  #         echo "CONAN_APPLE_CLANG_VERSIONS=${{ matrix.config.version }}.0" >> $GITHUB_ENV
 
-          $a = python ci_utils/set_envvars_and_files.py
-          Write-Host $a
-          Invoke-Expression $a
+  #     - name: Settting EnvVars (Windows)
+  #       if: ${{ matrix.config.compiler == 'Visual Studio' }}
+  #       # shell: bash
+  #       shell: powershell
+  #       run: |
+  #         echo "CONAN_VISUAL_VERSIONS=${{ matrix.config.version }}" >> $Env:GITHUB_ENV
+  #         echo "CONAN_VISUAL_RUNTIMES=${{ matrix.config.msvc_runtime }}" >> $Env:GITHUB_ENV
+  #         # echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $env:GITHUB_ENV
 
-          $ErrorActionPreference = 'SilentlyContinue'
-          conan remote add kth https://knuth.jfrog.io/artifactory/api/conan/knuth
-          $ErrorActionPreference = 'Continue'
+  #     - name: Build (Unix)
+  #       if: ${{ matrix.config.compiler != 'Visual Studio' }}
+  #       env:
+  #         CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_USERNAME }}
+  #         CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
+  #         CONAN_LOGIN_USERNAME_UPLOAD_REPO: ${{ secrets.CONAN_LOGIN_USERNAME_UPLOAD_REPO }}
+  #         CONAN_PASSWORD_UPLOAD_REPO: ${{ secrets.CONAN_PASSWORD_UPLOAD_REPO }}
+  #         CONAN_STABLE_BRANCH_PATTERN: "master$" #"release/*"
+  #         CONAN_DISABLE_STRICT_MODE: 1          # Remove after implementing Conan v2
+  #         # CONAN_BUILD_POLICY: "missing"
+  #       shell: bash
+  #       run: |
+  #         echo ${{ matrix.config.compiler }}
+  #         echo ${BPT_MATRIX}
+  #         echo ${CONAN_STABLE_BRANCH_PATTERN}
+  #         echo ${CONAN_GCC_VERSIONS}
+  #         echo ${CONAN_APPLE_CLANG_VERSIONS}
+  #         echo ${CONAN_DOCKER_IMAGE}
+  #         echo ${CONAN_LOGIN_USERNAME}
+  #         echo ${CONAN_LOGIN_USERNAME_UPLOAD_REPO}
+  #         echo ${CONAN_LOGIN_USERNAME}
+  #         echo ${CONAN_DOCKER_ENTRY_SCRIPT}
+  #         echo ${CONAN_DISABLE_STRICT_MODE}
+  #         # echo ${CONAN_BUILD_POLICY}
 
-          # python ci_utils/process_conan_reqs.py
+  #         export KTH_BRANCH=$(echo '${{ github.ref }}' | awk -F '/' '{print $3}')
+  #         echo "My branch name is $KTH_BRANCH"
 
-          $ErrorActionPreference = 'SilentlyContinue'
-          conan remove "*" -f
-          conan remote remove kth
-          conan remote remove kthbuild_kth_temp_
-          $ErrorActionPreference = 'Continue'
+  #         chmod +x ci_utils/.ci-cd/run.sh
+  #         ./ci_utils/.ci-cd/run.sh
 
-          python build.py
+  #     - name: Build (Windows)
+  #       if: ${{ matrix.config.compiler == 'Visual Studio' }}
+  #       env:
+  #         CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_USERNAME }}
+  #         CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
+  #         CONAN_LOGIN_USERNAME_UPLOAD_REPO: ${{ secrets.CONAN_LOGIN_USERNAME_UPLOAD_REPO }}
+  #         CONAN_PASSWORD_UPLOAD_REPO: ${{ secrets.CONAN_PASSWORD_UPLOAD_REPO }}
+  #         CONAN_STABLE_BRANCH_PATTERN: "master$" #"release/*"
+  #         CONAN_DISABLE_STRICT_MODE: 1          # Remove after implementing Conan v2
+  #         # CONAN_BUILD_POLICY: "missing"
+
+  #       shell: powershell
+  #       run: |
+  #         # echo ${{ matrix.config.compiler }}
+  #         # echo %BPT_MATRIX%
+  #         # echo %CONAN_STABLE_BRANCH_PATTERN%
+  #         # echo %CONAN_LOGIN_USERNAME%
+
+  #         Write-Host "CONAN_VISUAL_VERSIONS: $Env:CONAN_VISUAL_VERSIONS"
+  #         Write-Host "CONAN_VISUAL_RUNTIMES: $Env:CONAN_VISUAL_RUNTIMES"
+  #         # Write-Host "CONAN_BUILD_POLICY: $Env:CONAN_BUILD_POLICY"
+
+  #         $Env:KTH_BRANCH = "${{ github.ref }}".Split("/")[2]
+  #         Write-Host "My branch name is $Env:KTH_BRANCH"
+
+  #         $a = python ci_utils/set_envvars_and_files.py
+  #         Write-Host $a
+  #         Invoke-Expression $a
+
+  #         $ErrorActionPreference = 'SilentlyContinue'
+  #         conan remote add kth https://knuth.jfrog.io/artifactory/api/conan/knuth
+  #         $ErrorActionPreference = 'Continue'
+
+  #         # python ci_utils/process_conan_reqs.py
+
+  #         $ErrorActionPreference = 'SilentlyContinue'
+  #         conan remove "*" -f
+  #         conan remote remove kth
+  #         conan remote remove kthbuild_kth_temp_
+  #         $ErrorActionPreference = 'Continue'
+
+  #         python build.py
 
   static-checks:
     # needs: wait-for-dependencies

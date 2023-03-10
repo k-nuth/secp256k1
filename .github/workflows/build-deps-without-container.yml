@@ -32,6 +32,7 @@ jobs:
           echo "inputs.reference: ${{ inputs.reference }}"
           python -c 'import platform; print(platform.machine())'
           uname -m
+          pip install cpuid --upgrade --user
 
 
       - uses: actions/checkout@v3

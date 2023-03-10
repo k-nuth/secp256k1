@@ -6,20 +6,18 @@ import os
 from conan import ConanFile
 from conan.tools.build.cppstd import check_min_cppstd
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
+from conan.tools.files import copy #, apply_conandata_patches, export_conandata_patches, get, rm, rmdir
 from kthbuild import option_on_off, march_conan_manip, pass_march_to_compiler
 from kthbuild import KnuthConanFileV2
 
-# class Secp256k1Conan(KnuthConanFileV2):
-class Secp256k1Conan(ConanFile):
-    def recipe_dir(self):
-        return os.path.dirname(os.path.abspath(__file__))
+required_conan_version = ">=2.0"
 
+class Secp256k1Conan(KnuthConanFileV2):
     name = "secp256k1"
     license = "http://www.boost.org/users/license.html"
     url = "https://github.com/k-nuth/secp256k1"
     description = "Optimized C library for EC operations on curve secp256k1"
     settings = "os", "compiler", "build_type", "arch"
-
 
     #TODO(fernando): See what to do with shared/static option... (not supported yet in Cmake)
 
@@ -30,7 +28,6 @@ class Secp256k1Conan(ConanFile):
 
                "ecmult_window_size": ["ANY"],
                "ecmult_gen_precision": ["ANY"],
-
 
                "enable_ecmult_static_precomputation": [True, False],
                "enable_module_ecdh": [True, False],
@@ -50,20 +47,15 @@ class Secp256k1Conan(ConanFile):
                "cflags": ["ANY"],
                "cmake_export_compile_commands": [True, False],
 
-
-
-            #    "with_bignum": ["conan", "auto", "system", "no"]
-
+            #  "with_bignum": ["conan", "auto", "system", "no"]
             #TODO(fernando): check what to do with with_asm, with_field and with_scalar
             # Check CMake files and Legacy and bitcoin core makefiles
-
-            #    "with_asm": ['x86_64', 'arm', 'no', 'auto'],
-            #    "with_field": ['64bit', '32bit', 'auto'],
-            #    "with_scalar": ['64bit', '32bit', 'auto'],
-            #    "with_bignum": ['gmp', 'no', 'auto'],
+            #  "with_asm": ['x86_64', 'arm', 'no', 'auto'],
+            #  "with_field": ['64bit', '32bit', 'auto'],
+            #  "with_scalar": ['64bit', '32bit', 'auto'],
+            #  "with_bignum": ['gmp', 'no', 'auto'],
     }
 
-    # default_options = make_default_options_method()
     default_options = {
         "shared": False,
         "fPIC": True,
@@ -98,10 +90,8 @@ class Secp256k1Conan(ConanFile):
         # "with_bignum": 'auto'"
     }
 
-    # generators = "cmake"
     exports = "conan_*", "ci_utils/*"
     exports_sources = "src/*", "include/*", "CMakeLists.txt", "cmake/*", "secp256k1Config.cmake.in", "contrib/*", "test/*"
-    # build_policy = "missing"
 
     @property
     def bignum_lib_name(self):
@@ -194,13 +184,21 @@ class Secp256k1Conan(ConanFile):
         #     # cmake.test(target="tests")
 
 
+    # def package(self):
+    #     copy(self, "*.h", dst="include", src="include", keep_path=True)
+    #     copy(self, "*.lib", dst="lib", keep_path=False)
+    #     copy(self, "*.dll", dst="bin", keep_path=False)
+    #     copy(self, "*.dylib*", dst="lib", keep_path=False)
+    #     copy(self, "*.so", dst="lib", keep_path=False)
+    #     copy(self, "*.a", dst="lib", keep_path=False)
+
     def package(self):
-        self.copy("*.h", dst="include", src="include", keep_path=True)
-        self.copy("*.lib", dst="lib", keep_path=False)
-        self.copy("*.dll", dst="bin", keep_path=False)
-        self.copy("*.dylib*", dst="lib", keep_path=False)
-        self.copy("*.so", dst="lib", keep_path=False)
-        self.copy("*.a", dst="lib", keep_path=False)
+        cmake = CMake(self)
+        cmake.install()
+        # rmdir(self, os.path.join(self.package_folder, "lib", "cmake"))
+        # rmdir(self, os.path.join(self.package_folder, "lib", "pkgconfig"))
+        # rmdir(self, os.path.join(self.package_folder, "res"))
+        # rmdir(self, os.path.join(self.package_folder, "share"))
 
     def package_info(self):
         self.cpp_info.libs = ["secp256k1"]

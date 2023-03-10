@@ -11,11 +11,9 @@ def main():
             for level in data:
                 for reference in level:
                     for platform in platform_data['config']:
-                        if platform["compiler"] == "GCC":
-                            platform["name"] = f'{platform["name"]} - {reference["ref"]}'
-                            platform["reference"] = reference["ref"]
-                            matrix["config"].append(platform)
-
+                        platform["name"] = f'{platform["name"]} - {reference["ref"]}'
+                        platform["reference"] = reference["ref"]
+                        matrix["config"].append(platform)
 
             if len(matrix["config"]) == 0:
                 matrix["config"].append({"reference": "null"})

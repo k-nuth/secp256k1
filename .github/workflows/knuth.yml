@@ -172,7 +172,7 @@ jobs:
           # # echo "::set-output name=${JSON//'%'/'%25'}"
 
   build-with-container:
-    needs: [build-deps-with-container, generate-matrix]
+    needs: [generate-matrix]
     strategy:
       fail-fast: false
       matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}

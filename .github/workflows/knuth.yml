@@ -200,7 +200,7 @@ jobs:
     strategy:
       matrix: ${{ fromJson(needs.calc-deps.outputs.matrix) }}
     name: ${{ matrix.config.name }}
-    uses: ./.github/workflows/build-deps-with-container.yml
+    uses: ./.github/workflows/build-deps-without-container.yml
     with:
       if: ${{ matrix.config.compiler != 'GCC' }}
       os: ${{ matrix.config.os }}

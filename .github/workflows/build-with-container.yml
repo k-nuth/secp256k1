@@ -54,7 +54,10 @@ jobs:
           echo "inputs.compiler-version:   ${{ inputs.compiler-version }}"
 
           echo "inputs.version-file:       ${{ inputs.version-file }}"
-          echo "inputs.build-version:      ${{ inputs.build-version }}"
+          echo "github.event_name:         ${{ github.event_name }}"
+
+
+
 
       # ----------------------------------------------------------------
 

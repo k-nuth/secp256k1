@@ -21,6 +21,16 @@ env:
   # DOCKER_REGISTRY: taocpp.jfrog.io/model-docker
 
 jobs:
+  print-envs:
+    runs-on: ubuntu-20.04
+    # container:
+    #   image: ${{ inputs.image }}
+    steps:
+      - run: |
+          echo "env.CONAN_REMOTE: ${{ env.CONAN_REMOTE }}"
+          echo "CONAN_REMOTE:     $CONAN_REMOTE"
+
+
   # master:
   #   name: Master and Dev
   #   if: github.ref == 'refs/heads/master' ||

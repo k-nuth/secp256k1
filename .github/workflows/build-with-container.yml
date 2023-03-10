@@ -115,7 +115,7 @@ jobs:
         # This should not be logged in to conan remote since we are building for ubuntu the binaries are available in CCI
         run: |
           # conan remote disable ${{ inputs.conan-remote }}
-          conan profile show default
+          # conan profile show default
           conan lock create conanfile.py --version ${{ inputs.build-version }} --lockfile=conan.lock --lockfile-out=build/conan.lock
           conan create conanfile.py ${{ inputs.build-version }}@ --lockfile=build/conan.lock
 

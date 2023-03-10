@@ -32,6 +32,9 @@ jobs:
     runs-on: ubuntu-20.04
     container:
       image: docker.pkg.github.com/k-nuth/kth/alpine-image
+      credentials:
+        username: ${{ github.repository_owner }}
+        password: ${{ github.token }}
     steps:
       - run: |
           echo "env.CONAN_REMOTE: ${{ env.CONAN_REMOTE }}"

@@ -202,7 +202,6 @@ jobs:
     #   image: "conanio/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
 
     container:
-      # image: "kthnode/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
       image: "kthnode/gcc12-ubuntu18.04
 
     steps:

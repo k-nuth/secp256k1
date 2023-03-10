@@ -3,7 +3,11 @@ on:
     inputs:
       if:
         description: 'Whether to run this job'
-        required: false
+        required: true
+        type: boolean
+      upload:
+        description: 'Have to upload the package'
+        required: true
         type: boolean
       os:
         required: true
@@ -54,7 +58,8 @@ jobs:
           echo "inputs.compiler-version:   ${{ inputs.compiler-version }}"
 
           echo "inputs.version-file:       ${{ inputs.version-file }}"
-          echo "github.event_name:         ${{ github.event_name }}"
+          echo "inputs.upload:             ${{ inputs.upload }}"
+          # echo "github.event_name:         ${{ github.event_name }}"
 
 
 
@@ -127,7 +132,8 @@ jobs:
       # - uses: github/codeql-action/analyze@v2
 
       - name: upload
-        if: github.event_name == 'push' && needs.check.outputs.permitted == 'true'
+        # if: github.event_name == 'push' && needs.check.outputs.permitted == 'true'
+        if: ${{ inputs.upload }}
         run: |
           conan remote enable ${{ inputs.conan-remote }}
           conan user -p ${{ inputs.CONAN_PASSWORD }} -r ${{ inputs.conan-remote }} ${{ inputs.CONAN_LOGIN_USERNAME }}

@@ -180,6 +180,7 @@ jobs:
     uses: ./.github/workflows/build-with-container.yml
     with:
       if: ${{ matrix.config.compiler == 'GCC' }}
+      upload: github.event_name == 'push' && needs.check.outputs.permitted == 'true'
       os: ${{ matrix.config.os }}
       image: "kthnode/gcc${{ matrix.config.version }}${{ matrix.config.docker_suffix }}"
       conan-remote: "kth"

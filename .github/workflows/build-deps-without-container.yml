@@ -30,6 +30,7 @@ jobs:
           echo "inputs.if: ${{ inputs.if }}"
           echo "inputs.os: ${{ inputs.os }}"
           echo "inputs.reference: ${{ inputs.reference }}"
+          python -c 'import platform; print(platform.machine())'
 
 
       - uses: actions/checkout@v3

@@ -40,6 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
+          submodules: true
           fetch-depth: 0 # Required due to the way Git works, without it this action won't be able to find any or the correct tags
       - id: version
         uses: ./ci_utils/.github/actions/determine-version

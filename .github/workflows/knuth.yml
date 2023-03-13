@@ -136,7 +136,8 @@ jobs:
     strategy:
       matrix: ${{ fromJson(needs.calc-deps.outputs.matrix) }}
     name: ${{ matrix.config.name }}
-    uses: ./ci_utils/.github/workflows/build-deps-with-container.yml
+    # uses: ./ci_utils/.github/workflows/build-deps-with-container.yml
+    uses: k-nuth/ci-utils/.github/workflows/build-deps-with-container.yml@master
     with:
       if: ${{ matrix.config.compiler == 'GCC' }}
       os: ${{ matrix.config.os }}
@@ -153,7 +154,7 @@ jobs:
     strategy:
       matrix: ${{ fromJson(needs.calc-deps.outputs.matrix) }}
     name: ${{ matrix.config.name }}
-    uses: ./ci_utils/.github/workflows/build-deps-without-container.yml
+    uses: k-nuth/ci-utils/.github/workflows/build-deps-without-container.yml
     with:
       if: ${{ matrix.config.compiler != 'GCC' }}
       os: ${{ matrix.config.os }}
@@ -191,7 +192,7 @@ jobs:
       fail-fast: false
       matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
     name: ${{ matrix.config.name }}
-    uses: ./ci_utils/.github/workflows/build-with-container.yml
+    uses: k-nuth/ci-utils/.github/workflows/build-with-container.yml
     with:
       if: ${{ matrix.config.compiler == 'GCC' }}
       upload: ${{ github.event_name == 'push' }} # && needs.check.outputs.permitted == 'true'
@@ -215,7 +216,7 @@ jobs:
       fail-fast: false
       matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
     name: ${{ matrix.config.name }}
-    uses: ./ci_utils/.github/workflows/build-without-container.yml
+    uses: k-nuth/ci-utils/.github/workflows/build-without-container.yml
     with:
       if: ${{ matrix.config.compiler != 'GCC' }}
       upload: ${{ github.event_name == 'push' }} # && needs.check.outputs.permitted == 'true'

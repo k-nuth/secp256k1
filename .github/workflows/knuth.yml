@@ -46,6 +46,7 @@ jobs:
           unique-alt-id: ${{ github.sha }}
 
   build-base-docker-image:
+    name: Builds Alpine Docker image
     runs-on: ubuntu-latest
     outputs:
       # name: docker.pkg.github.com/${{ github.repository }}/alpine-image:${{ steps.version.outputs.version }}
@@ -72,6 +73,7 @@ jobs:
         run: docker push ${{ env.name }}:${{ steps.version.outputs.version }}
 
   calc-deps:
+    name: Dependencies Calculation
     needs: [build-base-docker-image, check]
     if: needs.check.outputs.permitted == 'true'
     runs-on: ubuntu-latest

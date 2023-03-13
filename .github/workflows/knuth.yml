@@ -59,6 +59,8 @@ jobs:
       name: docker.pkg.github.com/k-nuth/kth/alpine-image
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: true
       - id: version
         run: echo "version=${{ hashFiles('./ci_utils/Dockerfile.build') }}" >> $GITHUB_OUTPUT
       - uses: docker/login-action@v2

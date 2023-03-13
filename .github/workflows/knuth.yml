@@ -6,7 +6,7 @@ on:
     branches:
       - main   # tagged latest
       - master # tagged latest
-      - dev    # tagged test
+      # - dev    # tagged test
       - init
     tags:
       - v* # semver release

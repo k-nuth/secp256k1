@@ -39,8 +39,8 @@ jobs:
       build-version: ${{ steps.version.outputs.build-version }}
     steps:
       - uses: actions/checkout@v3
-        # with:
-        #   fetch-depth: 0 # Required due to the way Git works, without it this action won't be able to find any or the correct tags
+        with:
+          fetch-depth: 0 # Required due to the way Git works, without it this action won't be able to find any or the correct tags
       - id: version
         uses: ./.github/actions/determine-version
         with:

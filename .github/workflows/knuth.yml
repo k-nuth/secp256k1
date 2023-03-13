@@ -43,7 +43,8 @@ jobs:
         uses: ./.github/actions/determine-version
         with:
           github-ref: ${{ github.ref }}
-          unique-alt-id: ${{ github.sha }}
+          # unique-alt-id: ${{ github.sha }}
+          run-number: ${{ github.run_number }}
 
   build-base-docker-image:
     name: Builds Alpine Docker image

@@ -60,7 +60,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - id: version
-        run: echo "version=${{ hashFiles('Dockerfile.build') }}" >> $GITHUB_OUTPUT
+        run: echo "version=${{ hashFiles('./ci_utils/Dockerfile.build') }}" >> $GITHUB_OUTPUT
       - uses: docker/login-action@v2
         with:
           registry: docker.pkg.github.com
@@ -71,7 +71,7 @@ jobs:
         run: |
           docker pull ${{ env.name }}:${{ steps.version.outputs.version }} > /dev/null && echo "exists=true" >> $GITHUB_OUTPUT || echo "exists=false" >> $GITHUB_OUTPUT
       - if: ${{ steps.check.outputs.exists == 'false' }}
-        run: docker build . --file Dockerfile.build --tag ${{ env.name }}:${{ steps.version.outputs.version }}
+        run: docker build . --file ./ci_utils/Dockerfile.build --tag ${{ env.name }}:${{ steps.version.outputs.version }}
       - if: ${{ steps.check.outputs.exists == 'false' }}
         run: docker push ${{ env.name }}:${{ steps.version.outputs.version }}
 
@@ -124,7 +124,7 @@ jobs:
           cp ./ci_utils/.github/matrix.json platform.json
           echo $(cat build_order.json)
           # cd backend
-          python3 build-order-to-matrix.py
+          python3 ./ci_utils/build-order-to-matrix.py
           MATRIX=$(cat matrix.json)
           echo "${MATRIX}"
           echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT

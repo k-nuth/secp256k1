@@ -42,7 +42,7 @@ jobs:
         with:
           fetch-depth: 0 # Required due to the way Git works, without it this action won't be able to find any or the correct tags
       - id: version
-        uses: ./.github/actions/determine-version
+        uses: ./ci_utils/.github/actions/determine-version
         with:
           github-ref: ${{ github.ref }}
           # unique-alt-id: ${{ github.sha }}
@@ -104,8 +104,8 @@ jobs:
         with:
           path: ~/.conan/data
           key: alpine-${{ hashFiles('**/conan.lock') }}
-      - uses: ./.github/actions/setup-conan
-      - uses: ./.github/actions/setup-kthbuild
+      - uses: ./ci_utils/.github/actions/setup-conan
+      - uses: ./ci_utils/.github/actions/setup-kthbuild
       - name: conan login
         # run: conan user -p ${{ secrets.CONAN_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
         run: conan remote login -p ${{ secrets.CONAN_PASSWORD }} $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
@@ -136,7 +136,7 @@ jobs:
     strategy:
       matrix: ${{ fromJson(needs.calc-deps.outputs.matrix) }}
     name: ${{ matrix.config.name }}
-    uses: ./.github/workflows/build-deps-with-container.yml
+    uses: ./ci_utils/.github/workflows/build-deps-with-container.yml
     with:
       if: ${{ matrix.config.compiler == 'GCC' }}
       os: ${{ matrix.config.os }}
@@ -153,7 +153,7 @@ jobs:
     strategy:
       matrix: ${{ fromJson(needs.calc-deps.outputs.matrix) }}
     name: ${{ matrix.config.name }}
-    uses: ./.github/workflows/build-deps-without-container.yml
+    uses: ./ci_utils/.github/workflows/build-deps-without-container.yml
     with:
       if: ${{ matrix.config.compiler != 'GCC' }}
       os: ${{ matrix.config.os }}
@@ -191,7 +191,7 @@ jobs:
       fail-fast: false
       matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
     name: ${{ matrix.config.name }}
-    uses: ./.github/workflows/build-with-container.yml
+    uses: ./ci_utils/.github/workflows/build-with-container.yml
     with:
       if: ${{ matrix.config.compiler == 'GCC' }}
       upload: ${{ github.event_name == 'push' }} # && needs.check.outputs.permitted == 'true'
@@ -215,7 +215,7 @@ jobs:
       fail-fast: false
       matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
     name: ${{ matrix.config.name }}
-    uses: ./.github/workflows/build-without-container.yml
+    uses: ./ci_utils/.github/workflows/build-without-container.yml
     with:
       if: ${{ matrix.config.compiler != 'GCC' }}
       upload: ${{ github.event_name == 'push' }} # && needs.check.outputs.permitted == 'true'
@@ -262,8 +262,8 @@ jobs:
   #       with:
   #         python-version: "3.10"
 
-  #     - uses: ./.github/actions/setup-conan
-  #     - uses: ./.github/actions/setup-kthbuild
+  #     - uses: ./ci_utils/.github/actions/setup-conan
+  #     - uses: ./ci_utils/.github/actions/setup-kthbuild
   #     - uses: lukka/get-cmake@latest
 
   #     # - name: Install Dependencies (Unix)
@@ -586,9 +586,9 @@ jobs:
   #   steps:
   #     - uses: actions/checkout@v3
   #     - if: ${{ matrix.reference != 'null' }}
-  #       uses: ./.github/actions/setup-conan
+  #       uses: ./ci_utils/.github/actions/setup-conan
   #     - if: ${{ matrix.reference != 'null' }}
-  #       uses: ./.github/actions/setup-kthbuild
+  #       uses: ./ci_utils/.github/actions/setup-kthbuild
   #     - if: ${{ matrix.reference != 'null' }}
   #       # run: conan user -p ${{ secrets.CONAN_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
   #       run: conan remote login -p ${{ secrets.CONAN_PASSWORD }} $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
@@ -665,9 +665,9 @@ jobs:
 
   #     # - uses: actions/checkout@v3
   #     # - if: ${{ matrix.reference != 'null' }}
-  #     #   uses: ./.github/actions/setup-conan
+  #     #   uses: ./ci_utils/.github/actions/setup-conan
   #     # - if: ${{ matrix.reference != 'null' }}
-  #     #   uses: ./.github/actions/setup-kthbuild
+  #     #   uses: ./ci_utils/.github/actions/setup-kthbuild
   #     # - if: ${{ matrix.reference != 'null' }}
   #     #   # run: conan user -p ${{ secrets.CONAN_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
   #     #   run: conan remote login -p ${{ secrets.CONAN_PASSWORD }} $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
@@ -698,9 +698,9 @@ jobs:
   #   steps:
   #     - uses: actions/checkout@v3
   #     - if: ${{ matrix.reference != 'null' }}
-  #       uses: ./.github/actions/setup-conan
+  #       uses: ./ci_utils/.github/actions/setup-conan
   #     - if: ${{ matrix.reference != 'null' }}
-  #       uses: ./.github/actions/setup-kthbuild
+  #       uses: ./ci_utils/.github/actions/setup-kthbuild
   #     - if: ${{ matrix.reference != 'null' }}
   #       # run: conan user -p ${{ secrets.CONAN_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
   #       run: conan remote login -p ${{ secrets.CONAN_PASSWORD }} $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}

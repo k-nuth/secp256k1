@@ -193,6 +193,27 @@ jobs:
       CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_USERNAME }}
       CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
 
+  build-without-container:
+    needs: [generate-matrix]
+    strategy:
+      fail-fast: false
+      matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
+    name: ${{ matrix.config.name }}
+    uses: ./.github/workflows/build-without-container.yml
+    with:
+      if: ${{ matrix.config.compiler != 'GCC' }}
+      upload: ${{ github.event_name == 'push' }} # && needs.check.outputs.permitted == 'true'
+      os: ${{ matrix.config.os }}
+      conan-remote: "kth"
+      recipe-name: "secp256k1"
+      compiler: ${{ matrix.config.compiler }}
+      compiler-version: ${{ matrix.config.version }}
+      version-file: "include/secp256k1/version.h"
+      build-version: "0.16.0-commit.${{ github.run_number }}"
+    secrets:
+      CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_USERNAME }}
+      CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
+
 
 
 

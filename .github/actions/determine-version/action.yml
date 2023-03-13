@@ -25,6 +25,7 @@ runs:
       echo "LAST_TAG: $LAST_TAG"
       LAST_TAG=$(echo $LAST_TAG | sed -e 's/^v//')
       echo "LAST_TAG: $LAST_TAG"
+      [[ "$LAST_TAG" == "" ]] && LAST_TAG="0.0.0"
 
       VERSION=$(echo "${{ inputs.github-ref }}" | sed -e 's,.*/\(.*\),\1,')
       [[ "${{ inputs.github-ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')

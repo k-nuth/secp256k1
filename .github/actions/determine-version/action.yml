@@ -34,7 +34,7 @@ runs:
       # [ "$VERSION" == "dev" ] && VERSION=test
       # [ "$VERSION" == "merge" ] && VERSION=$(echo "${{ inputs.unique-alt-id }}")
 
-    # "0.16.0-commit.${{ github.run_number }}"
+      # "0.16.0-commit.${{ github.run_number }}"
       [ "$VERSION" == "main" ] && VERSION=$(echo "$LAST_TAG-commit.${{ inputs.run-number }}")
       [ "$VERSION" == "master" ] && VERSION=$(echo "$LAST_TAG-commit.${{ inputs.run-number }}")
       [ "$VERSION" == "dev" ] && VERSION=$(echo "$LAST_TAG-commit.${{ inputs.run-number }}")

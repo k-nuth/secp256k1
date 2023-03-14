@@ -75,12 +75,9 @@ class Secp256k1Conan(KnuthConanFileV2):
         "openssl_tests": False,
         "bignum_lib": True,
 
-        # "march_id": "_DUMMY_",
         "march_strategy": "download_if_possible",
 
         "verbose": False,
-        # "cxxflags": "_DUMMY_",
-        # "cflags": "_DUMMY_",
         "cmake_export_compile_commands": False
 
         # "with_bignum": conan"

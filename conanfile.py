@@ -75,12 +75,12 @@ class Secp256k1Conan(KnuthConanFileV2):
         "openssl_tests": False,
         "bignum_lib": True,
 
-        "march_id": "_DUMMY_",
+        # "march_id": "_DUMMY_",
         "march_strategy": "download_if_possible",
 
         "verbose": False,
-        "cxxflags": "_DUMMY_",
-        "cflags": "_DUMMY_",
+        # "cxxflags": "_DUMMY_",
+        # "cflags": "_DUMMY_",
         "cmake_export_compile_commands": False
 
         # "with_bignum": conan"
@@ -90,8 +90,8 @@ class Secp256k1Conan(KnuthConanFileV2):
         # "with_bignum": 'auto'"
     }
 
-    exports = "conan_*", "ci_utils/*"
-    exports_sources = "src/*", "include/*", "CMakeLists.txt", "cmake/*", "secp256k1Config.cmake.in", "contrib/*", "test/*"
+    # exports = "conan_*", "ci_utils/*"
+    exports_sources = "src/*", "include/*", "CMakeLists.txt", "ci_utils/cmake/*", "cmake/*", "secp256k1Config.cmake.in", "contrib/*", "test/*"
 
     @property
     def bignum_lib_name(self):

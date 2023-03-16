@@ -1,7 +1,7 @@
 <!-- <a target="_blank" href="http://semver.org">![Version][badge.version]</a> -->
 <!-- <a target="_blank" href="https://cirrus-ci.com/github/k-nuth/secp256k1">![Build Status][badge.Cirrus]</a> -->
 
-# secp256k1 <a target="_blank" href="https://github.com/k-nuth/secp256k1/releases">![Github Releases][badge.release]</a> <a target="_blank" href="https://travis-ci.org/k-nuth/secp256k1">![Build status][badge.Travis]</a> <a target="_blank" href="https://ci.appveyor.com/projects/k-nuth/secp256k1">![Build Status][badge.Appveyor]</a> <a target="_blank" href="https://t.me/knuth_cash">![Telegram][badge.telegram]</a> <a target="_blank" href="https://k-nuth.slack.com/">![Slack][badge.slack]</a>
+# secp256k1 <a target="_blank" href="https://github.com/k-nuth/secp256k1/releases">![Github Releases][badge.release]</a> <a target="_blank" href="https://github.com/k-nuth/secp256k1/actions">![Build status][badge.GhA]</a> <a target="_blank" href="https://t.me/knuth_cash">![Telegram][badge.telegram]</a> <a target="_blank" href="https://k-nuth.slack.com/">![Slack][badge.slack]</a>
 
 > Optimized C library for EC operations on curve secp256k1.
 
@@ -88,6 +88,7 @@ This library can be used stand-alone, but it is probably convenient for you to u
 Each of our modules has its own Github repository, but in case you want to create an issue, please do so in our [main repository](https://github.com/k-nuth/kth/issues).
 
 <!-- Links -->
+[badge.GhA]: https://github.com/k-nuth/secp256k1/workflows/Build%20and%20Test/badge.svg?branch=master
 [badge.Travis]: https://travis-ci.org/k-nuth/secp256k1.svg?branch=master
 [badge.Appveyor]: https://ci.appveyor.com/api/projects/status/github/k-nuth/secp256k1?svg=true&branch=master
 [badge.Cirrus]: https://api.cirrus-ci.com/github/k-nuth/secp256k1.svg?branch=master

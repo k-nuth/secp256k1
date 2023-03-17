@@ -5,4 +5,4 @@
 
 #pragma once
 
-#define KTH_SECP256K1_VERSION "0.0.0-dev.1";
+#define KTH_SECP256K1_VERSION "0.18.0";

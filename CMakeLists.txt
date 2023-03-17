@@ -8,28 +8,9 @@ project(secp256k1 VERSION 0 LANGUAGES C)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-# Process options.
-#==============================================================================
-# Implement --use-conan
-#------------------------------------------------------------------------------
-# option(USE_CONAN "Use Conan Build Tool." OFF)
-# option(NO_CONAN_AT_ALL "Conan totally disabled." OFF)
-
-# if (NO_CONAN_AT_ALL)
-#   set(USE_CONAN OFF)
-# endif()
-
-
-# Inherit --enable-shared
-#------------------------------------------------------------------------------
 option(ENABLE_SHARED "" OFF)
-
-# Implement POSITION_INDEPENDENT_CODE
-#------------------------------------------------------------------------------
 option(ENABLE_POSITION_INDEPENDENT_CODE "Enable POSITION_INDEPENDENT_CODE property" ON)
 
-
-# TODO(Knuth): This options are not reflected on code... Se old Makefiles
 option(ENABLE_BENCHMARK "Compile benchmark." OFF)
 option(ENABLE_TESTS "Compile tests." ON)
 option(ENABLE_OPENSSL_TESTS "Enable OpenSSL tests, if OpenSSL is available" OFF)
@@ -57,18 +38,10 @@ if(NOT ${SECP256K1_ECMULT_GEN_PRECISION} IN_LIST VALID_PRECISIONS)
 endif()
 add_definitions(-DECMULT_GEN_PREC_BITS=${SECP256K1_ECMULT_GEN_PRECISION})
 
-
-# message(${ENABLE_TESTS})
-# option(WITH_BIGNUM "")
-
-#TODO(fernando): Implement the following with_... as options
 set(WITH_ASM "auto" CACHE STRING "Specify assembly optimizations to use (x86_64|arm|no|auto).")
 set(WITH_FIELD "auto" CACHE STRING "Specify Field Implementation (64bit|32bit|auto).")
 set(WITH_SCALAR "auto" CACHE STRING "Specify scalar implementation (64bit|32bit|auto).")
 set(WITH_BIGNUM "auto" CACHE STRING "Specify Bignum Implementation (gmp|mpir|no|auto).")
-
-# set(KTH_PROJECT_VERSION "-" CACHE STRING "Specify the Knuth Project Version.")
-# message( STATUS "Knuth: Compiling version ${KTH_PROJECT_VERSION}")
 
 set(MARCH_ID "" CACHE STRING "Specify the Microarchitecture ID (x86_64|...).")
 message( STATUS "Knuth: Compiling for Microarchitecture ID ${MARCH_ID}")
@@ -76,14 +49,7 @@ message( STATUS "Knuth: Compiling for Microarchitecture ID ${MARCH_ID}")
 message( STATUS "Knuth: CONAN_CXX_FLAGS ${CONAN_CXX_FLAGS}")
 message( STATUS "Knuth: CONAN_C_FLAGS ${CONAN_C_FLAGS}")
 
-# if(EXISTS ${CMAKE_SOURCE_DIR}/ci_utils/cmake/knuthbuildinfo.cmake)
-#     include(${CMAKE_SOURCE_DIR}/ci_utils/cmake/knuthbuildinfo.cmake)
-# else()
-#     message( STATUS "knuthbuildinfo doent exists")
-# endif()
-
 find_package(gmp REQUIRED)
-
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/ci_utils/cmake)
@@ -185,28 +151,6 @@ elseif (NOT WITH_FIELD STREQUAL "32bit")
   message(FATAL_ERROR "Invalid scalar implementation: ${WITH_SCALAR}")
 endif()
 
-# #TODO(fernando): Bignum for Windows. See MPR (or something like this) that is a GMP for Windows.
-# # Implement --with-bignum
-# #------------------------------------------------------------------------------
-# if (NO_CONAN_AT_ALL)
-#   if (${WITH_BIGNUM} STREQUAL "auto")
-#     _check_has_gmp()
-#     if (HAS_GMP)
-#       set(WITH_BIGNUM "gmp")
-#     else()
-#       set(WITH_BIGNUM "no")
-#     endif()
-#   elseif (WITH_BIGNUM STREQUAL "gmp")
-#     _check_has_gmp()
-#     if (NOT HAS_GMP)
-#       message(FATAL_ERROR "gmp bignum explicitly requested but libgmp not available")
-#     endif()
-#   elseif (NOT ${WITH_BIGNUM} STREQUAL "no")
-#     message(FATAL_ERROR "Invalid bignum implementation: ${WITH_BIGNUM}")
-#   endif()
-# endif()
-
-
 if (ENABLE_SHARED)
   set(MODE SHARED)
 else()
@@ -224,13 +168,11 @@ if (ENABLE_POSITION_INDEPENDENT_CODE)
 endif(ENABLE_POSITION_INDEPENDENT_CODE)
 
 
-target_include_directories(secp256k1 PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(secp256k1 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
-  target_include_directories(secp256k1 PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_include_directories(secp256k1 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-  target_include_directories(secp256k1 PUBLIC
+target_include_directories(secp256k1 PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 
@@ -258,58 +200,25 @@ elseif (WITH_SCALAR STREQUAL "32bit")
   target_compile_definitions(secp256k1 PUBLIC -DUSE_SCALAR_8X32=1)
 endif()
 
-# message("fer WITH_BIGNUM: ")
-# message(WITH_ASM)
-# message(WITH_FIELD)
-# message(WITH_SCALAR)
-# message(${WITH_BIGNUM})
-
-# if (${WITH_BIGNUM} STREQUAL "auto")
-#   message("fer WITH_BIGNUM auto")
-# else()
-#   message("fer WITH_BIGNUM auto - FALSE")
-# endif()
-
-# message("WITH_BIGNUM--FER-FER")
-# message(${WITH_BIGNUM})
-
 if (${WITH_BIGNUM} STREQUAL "gmp")
   target_compile_definitions(secp256k1 PUBLIC -DHAVE_LIBGMP=1)
   target_compile_definitions(secp256k1 PUBLIC -DUSE_NUM_GMP=1)
   target_compile_definitions(secp256k1 PUBLIC -DUSE_FIELD_INV_NUM=1)
   target_compile_definitions(secp256k1 PUBLIC -DUSE_SCALAR_INV_NUM=1)
-
-  # if (NO_CONAN_AT_ALL)
-  #   target_include_directories(secp256k1 PUBLIC ${GMP_INCLUDE_DIR})
-  #   target_link_libraries(secp256k1 ${GMP_LIBRARIES})
-  # endif()
 elseif (${WITH_BIGNUM} STREQUAL "mpir")
   target_compile_definitions(secp256k1 PUBLIC -DHAVE_LIBGMP=1)
   target_compile_definitions(secp256k1 PUBLIC -DUSE_NUM_GMP=1)
   target_compile_definitions(secp256k1 PUBLIC -DUSE_FIELD_INV_NUM=1)
   target_compile_definitions(secp256k1 PUBLIC -DUSE_SCALAR_INV_NUM=1)
-
-  # if (NO_CONAN_AT_ALL)
-  #   target_include_directories(secp256k1 PUBLIC ${GMP_INCLUDE_DIR})
-  #   target_link_libraries(secp256k1 ${GMP_LIBRARIES})
-  # endif()
 elseif (${WITH_BIGNUM} STREQUAL "no")
   target_compile_definitions(secp256k1 PUBLIC -DUSE_NUM_NONE=1)
   target_compile_definitions(secp256k1 PUBLIC -DUSE_FIELD_INV_BUILTIN=1)
   target_compile_definitions(secp256k1 PUBLIC -DUSE_SCALAR_INV_BUILTIN=1)
 endif()
 
-# target_compile_definitions(secp256k1 PUBLIC -DKTH_PROJECT_VERSION="\\"${KTH_PROJECT_VERSION}\\"") #TODO(fernando): manage with Conan????
-# target_compile_definitions(secp256k1 PUBLIC -DKTH_PROJECT_VERSION="${KTH_PROJECT_VERSION}") #TODO(fernando): manage with Conan????
-
-
 if (ENABLE_ECMULT_STATIC_PRECOMPUTATION)
 	target_sources(secp256k1 PRIVATE ecmult_static_context.h)
 endif()
-
-# if (NOT NO_CONAN_AT_ALL)
-#   # target_link_libraries(secp256k1 PUBLIC ${CONAN_LIBS})
-# endif()
 
 target_link_libraries(secp256k1 gmp::gmp)
 
@@ -397,54 +306,24 @@ if (ENABLE_TESTS)
   set_target_properties(tests PROPERTIES FOLDER "secp256k1")
 endif()
 
+
+
 # Install
-#==============================================================================
-install(TARGETS secp256k1
-  EXPORT secp256k1
-  ARCHIVE DESTINATION lib)
-install(FILES include/secp256k1.h DESTINATION include)
+# ------------------------------------------------------------------------------
 
-if (ENABLE_MODULE_ECDH)
-  install(FILES include/secp256k1_ecdh.h DESTINATION include)
-endif()
+include(GNUInstallDirs)
+install(TARGETS ${PROJECT_NAME}
+    EXPORT ${PROJECT_NAME}-targets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-if (ENABLE_MODULE_SCHNORR)
-  install(FILES include/secp256k1_schnorr.h DESTINATION include)
-endif()
-
-if (ENABLE_MODULE_RECOVERY)
-  install(FILES include/secp256k1_recovery.h DESTINATION include)
-endif()
-
-# Export
-#==============================================================================
-include(CMakePackageConfigHelpers)
-
-export(EXPORT secp256k1
-  FILE "${CMAKE_CURRENT_BINARY_DIR}/secp256k1Targets.cmake")
-export(PACKAGE secp256k1)
-
-if (UNIX)
-  set(_config_package_location "lib/cmake")
-elseif (WIN32)
-  set(_config_package_location "cmake")
-endif()
-
-install(EXPORT secp256k1
-  FILE secp256k1Targets.cmake
-  DESTINATION ${_config_package_location})
-
-configure_file(secp256k1Config.cmake.in
-  "${CMAKE_CURRENT_BINARY_DIR}/secp256k1Config.cmake"
-  @ONLY)
-
-write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/secp256k1ConfigVersion.cmake"
-  VERSION ${PROJECT_VERSION}
-  COMPATIBILITY AnyNewerVersion)
-
-install(
-  FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/secp256k1Config.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/secp256k1ConfigVersion.cmake"
-  DESTINATION ${_config_package_location})
+# Generate and install a CMake package configuration file
+install(EXPORT ${PROJECT_NAME}-targets
+    FILE ${PROJECT_NAME}-config.cmake
+    NAMESPACE ${PROJECT_NAME}::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
+)

@@ -99,8 +99,8 @@ jobs:
       - uses: ./ci_utils/.github/actions/setup-conan
       - uses: ./ci_utils/.github/actions/setup-kthbuild
       - name: conan login
-        # run: conan user -p ${{ secrets.CONAN_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
-        run: conan remote login -p ${{ secrets.CONAN_PASSWORD }} $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
+        # run: conan user -p ${{ secrets.CONAN_3_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
+        run: conan remote login -p ${{ secrets.CONAN_3_PASSWORD }} $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
 
       - name: build order
         working-directory: .
@@ -137,7 +137,7 @@ jobs:
       conan-remote: "kth"
     secrets:
       conan-user: ${{ secrets.CONAN_LOGIN_USERNAME }}
-      conan-password: ${{ secrets.CONAN_PASSWORD }}
+      conan-password: ${{ secrets.CONAN_3_PASSWORD }}
 
   build-deps-without-container:
     needs: [build-base-docker-image, calc-deps]
@@ -152,7 +152,7 @@ jobs:
       conan-remote: "kth"
     secrets:
       conan-user: ${{ secrets.CONAN_LOGIN_USERNAME }}
-      conan-password: ${{ secrets.CONAN_PASSWORD }}
+      conan-password: ${{ secrets.CONAN_3_PASSWORD }}
 
   generate-matrix:
     name: Generate Job Matrix
@@ -197,7 +197,7 @@ jobs:
 
     secrets:
       CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_USERNAME }}
-      CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
+      CONAN_PASSWORD: ${{ secrets.CONAN_3_PASSWORD }}
 
   build-without-container:
     needs: [setup, generate-matrix]
@@ -218,7 +218,7 @@ jobs:
       build-version: "${{ needs.setup.outputs.build-version }}"
     secrets:
       CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_USERNAME }}
-      CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
+      CONAN_PASSWORD: ${{ secrets.CONAN_3_PASSWORD }}
 
 
 
@@ -301,9 +301,9 @@ jobs:
   #       if: ${{ matrix.config.compiler != 'Visual Studio' }}
   #       env:
   #         CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_USERNAME }}
-  #         CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
+  #         CONAN_PASSWORD: ${{ secrets.CONAN_3_PASSWORD }}
   #         CONAN_LOGIN_USERNAME_UPLOAD_REPO: ${{ secrets.CONAN_LOGIN_USERNAME_UPLOAD_REPO }}
-  #         CONAN_PASSWORD_UPLOAD_REPO: ${{ secrets.CONAN_PASSWORD_UPLOAD_REPO }}
+  #         CONAN_PASSWORD_UPLOAD_REPO: ${{ secrets.CONAN_3_PASSWORD_UPLOAD_REPO }}
   #         CONAN_STABLE_BRANCH_PATTERN: "master$" #"release/*"
   #         CONAN_DISABLE_STRICT_MODE: 1          # Remove after implementing Conan v2
   #         # CONAN_BUILD_POLICY: "missing"
@@ -332,9 +332,9 @@ jobs:
   #       if: ${{ matrix.config.compiler == 'Visual Studio' }}
   #       env:
   #         CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_USERNAME }}
-  #         CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
+  #         CONAN_PASSWORD: ${{ secrets.CONAN_3_PASSWORD }}
   #         CONAN_LOGIN_USERNAME_UPLOAD_REPO: ${{ secrets.CONAN_LOGIN_USERNAME_UPLOAD_REPO }}
-  #         CONAN_PASSWORD_UPLOAD_REPO: ${{ secrets.CONAN_PASSWORD_UPLOAD_REPO }}
+  #         CONAN_PASSWORD_UPLOAD_REPO: ${{ secrets.CONAN_3_PASSWORD_UPLOAD_REPO }}
   #         CONAN_STABLE_BRANCH_PATTERN: "master$" #"release/*"
   #         CONAN_DISABLE_STRICT_MODE: 1          # Remove after implementing Conan v2
   #         # CONAN_BUILD_POLICY: "missing"
@@ -412,9 +412,9 @@ jobs:
   #     - name: Upload Aliases
   #       env:
   #         CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_USERNAME }}
-  #         CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
+  #         CONAN_PASSWORD: ${{ secrets.CONAN_3_PASSWORD }}
   #         CONAN_LOGIN_USERNAME_UPLOAD_REPO: ${{ secrets.CONAN_LOGIN_USERNAME_UPLOAD_REPO }}
-  #         CONAN_PASSWORD_UPLOAD_REPO: ${{ secrets.CONAN_PASSWORD_UPLOAD_REPO }}
+  #         CONAN_PASSWORD_UPLOAD_REPO: ${{ secrets.CONAN_3_PASSWORD_UPLOAD_REPO }}
   #         CONAN_BUILD_POLICY: "missing"
   #       shell: bash
   #       run: |
@@ -579,8 +579,8 @@ jobs:
   #     - if: ${{ matrix.reference != 'null' }}
   #       uses: ./ci_utils/.github/actions/setup-kthbuild
   #     - if: ${{ matrix.reference != 'null' }}
-  #       # run: conan user -p ${{ secrets.CONAN_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
-  #       run: conan remote login -p ${{ secrets.CONAN_PASSWORD }} $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
+  #       # run: conan user -p ${{ secrets.CONAN_3_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
+  #       run: conan remote login -p ${{ secrets.CONAN_3_PASSWORD }} $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
   #     - name: download
   #       if: ${{ matrix.reference != 'null' }}
   #       uses: actions/download-artifact@v3
@@ -658,8 +658,8 @@ jobs:
   #     # - if: ${{ matrix.reference != 'null' }}
   #     #   uses: ./ci_utils/.github/actions/setup-kthbuild
   #     # - if: ${{ matrix.reference != 'null' }}
-  #     #   # run: conan user -p ${{ secrets.CONAN_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
-  #     #   run: conan remote login -p ${{ secrets.CONAN_PASSWORD }} $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
+  #     #   # run: conan user -p ${{ secrets.CONAN_3_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
+  #     #   run: conan remote login -p ${{ secrets.CONAN_3_PASSWORD }} $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
   #     # - name: download
   #     #   if: ${{ matrix.reference != 'null' }}
   #     #   uses: actions/download-artifact@v3
@@ -691,8 +691,8 @@ jobs:
   #     - if: ${{ matrix.reference != 'null' }}
   #       uses: ./ci_utils/.github/actions/setup-kthbuild
   #     - if: ${{ matrix.reference != 'null' }}
-  #       # run: conan user -p ${{ secrets.CONAN_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
-  #       run: conan remote login -p ${{ secrets.CONAN_PASSWORD }} $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
+  #       # run: conan user -p ${{ secrets.CONAN_3_PASSWORD }} -r $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
+  #       run: conan remote login -p ${{ secrets.CONAN_3_PASSWORD }} $CONAN_REMOTE ${{ secrets.CONAN_LOGIN_USERNAME }}
   #     - name: download
   #       if: ${{ matrix.reference != 'null' }}
   #       uses: actions/download-artifact@v3

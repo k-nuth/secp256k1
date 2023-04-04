@@ -87,7 +87,7 @@ if (ENABLE_ECMULT_STATIC_PRECOMPUTATION)
 		COMMAND gen_context
 	)
 
-	# target_sources(secp256k1 PRIVATE ecmult_static_context.h)
+	# target_sources(${PROJECT_NAME} PRIVATE ecmult_static_context.h)
 
 endif()
 
@@ -160,87 +160,87 @@ endif()
 
 # Build
 #==============================================================================
-add_library(secp256k1 ${MODE}   include/secp256k1.h   src/secp256k1.c)
+add_library(${PROJECT_NAME} ${MODE} include/secp256k1.h   src/secp256k1.c)
 
 
 if (ENABLE_POSITION_INDEPENDENT_CODE)
-  set_property(TARGET secp256k1 PROPERTY POSITION_INDEPENDENT_CODE ON)
+  set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 endif(ENABLE_POSITION_INDEPENDENT_CODE)
 
 
-target_include_directories(secp256k1 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_include_directories(secp256k1 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-target_include_directories(secp256k1 PUBLIC
+target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 
 _check_has_int128()
 if (HAS_INT128)
-  target_compile_definitions(secp256k1 PUBLIC -DHAVE___INT128=1)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DHAVE___INT128=1)
 endif()
 
 if (WITH_ASM STREQUAL "x86_64")
-  target_compile_definitions(secp256k1 PUBLIC -DUSE_ASM_X86_64=1)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_ASM_X86_64=1)
 elseif (WITH_FIELD STREQUAL "arm")
-  target_compile_definitions(secp256k1 PUBLIC -DUSE_EXTERNAL_ASM=1)
-  target_sources(secp256k1 PRIVATE "src/asm/field_10x26_arm.s")
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_EXTERNAL_ASM=1)
+  target_sources(${PROJECT_NAME} PRIVATE "src/asm/field_10x26_arm.s")
 endif()
 
 if (WITH_FIELD STREQUAL "64bit")
-  target_compile_definitions(secp256k1 PUBLIC -DUSE_FIELD_5X52=1)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_FIELD_5X52=1)
 elseif (WITH_FIELD STREQUAL "32bit")
-  target_compile_definitions(secp256k1 PUBLIC -DUSE_FIELD_10X26=1)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_FIELD_10X26=1)
 endif()
 
 if (WITH_SCALAR STREQUAL "64bit")
-  target_compile_definitions(secp256k1 PUBLIC -DUSE_SCALAR_4X64=1)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_SCALAR_4X64=1)
 elseif (WITH_SCALAR STREQUAL "32bit")
-  target_compile_definitions(secp256k1 PUBLIC -DUSE_SCALAR_8X32=1)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_SCALAR_8X32=1)
 endif()
 
 if (${WITH_BIGNUM} STREQUAL "gmp")
-  target_compile_definitions(secp256k1 PUBLIC -DHAVE_LIBGMP=1)
-  target_compile_definitions(secp256k1 PUBLIC -DUSE_NUM_GMP=1)
-  target_compile_definitions(secp256k1 PUBLIC -DUSE_FIELD_INV_NUM=1)
-  target_compile_definitions(secp256k1 PUBLIC -DUSE_SCALAR_INV_NUM=1)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DHAVE_LIBGMP=1)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_NUM_GMP=1)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_FIELD_INV_NUM=1)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_SCALAR_INV_NUM=1)
 elseif (${WITH_BIGNUM} STREQUAL "mpir")
-  target_compile_definitions(secp256k1 PUBLIC -DHAVE_LIBGMP=1)
-  target_compile_definitions(secp256k1 PUBLIC -DUSE_NUM_GMP=1)
-  target_compile_definitions(secp256k1 PUBLIC -DUSE_FIELD_INV_NUM=1)
-  target_compile_definitions(secp256k1 PUBLIC -DUSE_SCALAR_INV_NUM=1)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DHAVE_LIBGMP=1)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_NUM_GMP=1)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_FIELD_INV_NUM=1)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_SCALAR_INV_NUM=1)
 elseif (${WITH_BIGNUM} STREQUAL "no")
-  target_compile_definitions(secp256k1 PUBLIC -DUSE_NUM_NONE=1)
-  target_compile_definitions(secp256k1 PUBLIC -DUSE_FIELD_INV_BUILTIN=1)
-  target_compile_definitions(secp256k1 PUBLIC -DUSE_SCALAR_INV_BUILTIN=1)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_NUM_NONE=1)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_FIELD_INV_BUILTIN=1)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DUSE_SCALAR_INV_BUILTIN=1)
 endif()
 
 if (ENABLE_ECMULT_STATIC_PRECOMPUTATION)
-	target_sources(secp256k1 PRIVATE ecmult_static_context.h)
+	target_sources(${PROJECT_NAME} PRIVATE ecmult_static_context.h)
 endif()
 
-target_link_libraries(secp256k1 gmp::gmp)
+target_link_libraries(${PROJECT_NAME} gmp::gmp)
 
 if (ENABLE_MODULE_ECDH)
-  target_compile_definitions(secp256k1 PUBLIC -DENABLE_MODULE_ECDH=1)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DENABLE_MODULE_ECDH=1)
 endif()
 
 if (ENABLE_MODULE_SCHNORR)
-  target_compile_definitions(secp256k1 PUBLIC -DENABLE_MODULE_SCHNORR=1)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DENABLE_MODULE_SCHNORR=1)
 endif()
 
 if (ENABLE_MODULE_RECOVERY)
-  target_compile_definitions(secp256k1 PUBLIC -DENABLE_MODULE_RECOVERY=1)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC -DENABLE_MODULE_RECOVERY=1)
 endif()
 
-set_target_properties(secp256k1 PROPERTIES FOLDER "secp256k1")
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "secp256k1")
 
 # Benchmark
 #==============================================================================
 if (ENABLE_BENCHMARK)
   add_executable(bench_verify src/bench_verify.c)
-  target_link_libraries(bench_verify secp256k1)
+  target_link_libraries(bench_verify ${PROJECT_NAME})
   set_target_properties(bench_verify PROPERTIES FOLDER "secp256k1")
 
   if (ENABLE_OPENSSL_TESTS)
@@ -250,34 +250,34 @@ if (ENABLE_BENCHMARK)
 
 
   add_executable(bench_sign src/bench_sign.c)
-  target_link_libraries(bench_sign secp256k1)
+  target_link_libraries(bench_sign ${PROJECT_NAME})
   set_target_properties(bench_sign PROPERTIES FOLDER "secp256k1")
 
   add_executable(bench_internal src/bench_internal.c)
-  target_link_libraries(bench_internal secp256k1)
+  target_link_libraries(bench_internal ${PROJECT_NAME})
   set_target_properties(bench_internal PROPERTIES FOLDER "secp256k1")
 
   if (ENABLE_MODULE_ECDH)
     add_executable(bench_ecdh src/bench_ecdh.c)
-    target_link_libraries(bench_ecdh secp256k1)
+    target_link_libraries(bench_ecdh ${PROJECT_NAME})
     set_target_properties(bench_ecdh PROPERTIES FOLDER "secp256k1")
   endif()
 
   if (ENABLE_MODULE_SCHNORR)
     add_executable(bench_schnorr_verify src/bench_schnorr_verify.c)
-    target_link_libraries(bench_schnorr_verify secp256k1)
+    target_link_libraries(bench_schnorr_verify ${PROJECT_NAME})
     set_target_properties(bench_schnorr_verify PROPERTIES FOLDER "secp256k1")
   endif()
 
   if (ENABLE_MODULE_RECOVERY)
     add_executable(bench_recover src/bench_recover.c)
-    target_link_libraries(bench_recover secp256k1)
+    target_link_libraries(bench_recover ${PROJECT_NAME})
     set_target_properties(bench_recover PROPERTIES FOLDER "secp256k1")
   endif()
 
   if (ENABLE_MODULE_MULTISET)
     add_executable(bench_multiset src/bench_multiset.c)
-    target_link_libraries(bench_multiset secp256k1)
+    target_link_libraries(bench_multiset ${PROJECT_NAME})
     set_target_properties(bench_multiset PROPERTIES FOLDER "secp256k1")
   endif()
 endif()
@@ -296,7 +296,7 @@ if (ENABLE_TESTS)
   target_include_directories(tests PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR})
 
-  target_link_libraries(tests secp256k1)
+  target_link_libraries(tests ${PROJECT_NAME})
 
   enable_testing()
   add_test(

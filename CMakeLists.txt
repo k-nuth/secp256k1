@@ -161,7 +161,7 @@ endif()
 # Build
 #==============================================================================
 add_library(${PROJECT_NAME} ${MODE} include/secp256k1.h   src/secp256k1.c)
-
+add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 if (ENABLE_POSITION_INDEPENDENT_CODE)
   set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)

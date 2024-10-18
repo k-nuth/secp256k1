@@ -18,6 +18,7 @@ class Secp256k1Conan(KnuthConanFileV2):
     url = "https://github.com/k-nuth/secp256k1"
     description = "Optimized C library for EC operations on curve secp256k1"
     settings = "os", "compiler", "build_type", "arch"
+    package_type = "library"
 
     #TODO(fernando): See what to do with shared/static option... (not supported yet in Cmake)
 

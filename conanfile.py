@@ -111,7 +111,7 @@ class Secp256k1Conan(KnuthConanFileV2):
     def validate(self):
         KnuthConanFileV2.validate(self, pure_c=True)
         if self.info.settings.compiler.cppstd:
-            check_min_cppstd(self, "20")
+            check_min_cppstd(self, "23")
 
     def config_options(self):
         # ConanFile.config_options(self)
